@@ -8,7 +8,7 @@
 import Foundation
 import Alamofire
 
-protocol HTTPRequestable: URLRequestConvertible, URLConvertible{
+protocol HTTPRequestable: URLRequestConvertible {
     var scheme: String { get }
     var baseURLString: String { get throws }
     var httpMethod: HTTPMethod { get }
@@ -50,11 +50,7 @@ extension HTTPRequestable {
         components.host = try baseURLString
         components.port = try portNum
         components.path = "/\(version)/" + path.joined(separator: "/")
-        
-        if let queries {
-            components.queryItems = queries
-        }
-        
+
         return try components.asURL()
     }
 }

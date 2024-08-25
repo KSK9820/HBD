@@ -32,12 +32,13 @@ struct PostResponse: Decodable {
     
     func convertToPostModel() -> PostModel {
         let completed = content4 == "true" ? true : false
+        let url = URL(string: content1)
         return PostModel(postID: postID,
                          productID: productID,
                          title: title,
                          price: price,
                          content: content,
-                         link: content1,
+                         link: url,
                          recruitment: Int(content2)!,
                          recruitDeadline: Date(),
                          recruitDone: completed,

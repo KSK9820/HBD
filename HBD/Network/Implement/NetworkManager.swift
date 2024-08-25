@@ -7,10 +7,15 @@
 
 import Foundation
 import Alamofire
+import RxSwift
 
 
 final class NetworkManager {
+    
+    static let shared = NetworkManager()
     static let decoder = JSONDecoder()
+    
+    private init() {}    
     
     func checkDuplicateEmail(_ email: String) {
         do {
@@ -91,40 +96,43 @@ final class NetworkManager {
         }
     }
     
-    func getMyProfile() {
-        do {
-            let request = try HBDRequest.readMyProfile.asURLRequest()
-            
-            AF.request(request)
-                .responseDecodable(of: UserModel.self) { response in
-                    switch response.result {
-                    case .success(let data):
-                        switch response.response?.statusCode {
-                        case 200:
-                            print(data)
-                        default:
-                            break
-                        }
-                    case .failure(let error):
-                        switch  response.response?.statusCode {
-                        case 401, 403:
-                            print(error)
-                        case 419:
-                            self.refreshToken { status in
-                                switch status {
-                                case true:
-                                    self.getMyProfile()
-                                case false:
-                                    print("갱신 실패")
-                                }
+    func getMyProfile() -> Single<Result<UserModel, Error>> {
+        return Single.create { single -> Disposable in
+            do {
+                let request = try HBDRequest.readMyProfile.asURLRequest()
+                
+                AF.request(request)
+                    .responseDecodable(of: UserModel.self) { response in
+                        switch response.result {
+                        case .success(let data):
+                            switch response.response?.statusCode {
+                            case 200:
+                                single(.success(.success(data)))
+                            default:
+                                break
                             }
-                        default:
-                            break
+                        case .failure(let error):
+                            switch  response.response?.statusCode {
+                            case 401, 403:
+                                single(.success(.failure(error)))
+                            case 419:
+                                self.refreshToken { status in
+                                    switch status {
+                                    case true:
+                                        self.getMyProfile()
+                                    case false:
+                                        single(.success(.failure(error)))
+                                    }
+                                }
+                            default:
+                                break
+                            }
                         }
                     }
-                }
-        } catch {
-            print(error)
+            } catch {
+                print(error)
+            }
+            return Disposables.create()
         }
     }
     
@@ -208,7 +216,6 @@ final class NetworkManager {
         }
     }
     
-    
     func uploadImage(_ images: [Data]) {
         let request = HBDRequest.createImage
         
@@ -283,43 +290,47 @@ final class NetworkManager {
         }
     }
     
-    func getPosts(_ productID: String, page: String) {
-        do {
-            let request = try HBDRequest.readPosts(productID: productID, page: page).asURLRequest()
-            
-            AF.request(request)
-                .responseDecodable(of: PostsResponse.self) { response in
-                    switch response.result {
-                    case .success(let data):
-                        switch response.response?.statusCode {
-                        case 200:
-                            for i in data.data {
-                                print(i.convertToPostModel())
-                                print(data)
-                            }
-                        default:
-                            break
-                        }
-                    case .failure(let error):
-                        switch  response.response?.statusCode {
-                        case 401, 403:
-                            print(error)
-                        case 419:
-                            self.refreshToken { status in
-                                switch status {
-                                case true:
-                                    self.getPosts(productID, page: page)
-                                case false:
-                                    print("갱신 실패")
+    func getPosts(_ productID: String, page: String) -> Single<Result<[PostModel], Error>> {
+        return Single.create { single -> Disposable in
+            do {
+                let request = try HBDRequest.readPosts(productID: productID, page: page).asURLRequest()
+                
+                AF.request(request)
+                    .responseDecodable(of: PostsResponse.self) { response in
+                        switch response.result {
+                        case .success(let posts):
+                            switch response.response?.statusCode {
+                            case 200:
+                                var postModel = [PostModel]()
+                                for post in posts.data {
+                                    postModel.append(post.convertToPostModel())
                                 }
+                                single(.success(.success(postModel)))
+                            default:
+                                break
                             }
-                        default:
-                            break
+                        case .failure(let error):
+                            switch  response.response?.statusCode {
+                            case 401, 403:
+                                single(.success(.failure(NetworkError.emptyDataError)))
+                            case 419:
+                                self.refreshToken { status in
+                                    switch status {
+                                    case true:
+                                        self.getPosts(productID, page: page)
+                                    case false:
+                                        print("갱신 실패")
+                                    }
+                                }
+                            default:
+                                break
+                            }
                         }
                     }
-                }
-        } catch {
-            print(error)
+            } catch {
+                print(error)
+            }
+            return Disposables.create()
         }
     }
     
