@@ -7,12 +7,11 @@
 
 import UIKit
 import RxSwift
-import Alamofire
-import Kingfisher
+import RxCocoa
 
 final class GiftCollectionViewCell: UICollectionViewCell {
     
-    private let disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
     
     private let giftView = UIView().then {
         $0.layer.cornerRadius = 12
@@ -44,6 +43,56 @@ final class GiftCollectionViewCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
+    }
+    
+    
+    func setContent(_ content: PostModel) {
+        let viewModel = GiftCollectionViewCellViewModel(content)
+        
+        let input = GiftCollectionViewCellViewModel.Input(joinButtonTap: joinButton.rx.tap)
+        let output = viewModel.transform(input)
+            
+        output.giftImageData
+            .asDriver(onErrorJustReturn: nil)
+            .drive(with: self) { owner, data in
+                if let data = data {
+                    owner.giftImageView.image = UIImage(data: data)
+                } else {
+                    owner.giftImageView.image = UIImage(systemName: "gift")
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        output.joinResponse
+            .subscribe(with: self) { owner, like in
+                if like {
+                    owner.setJoinDone()
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        titleLabel.text = viewModel.title
+        priceLabel.text = viewModel.totalPrice
+        dueDayLabel.text = viewModel.deadLine
+        
+        if viewModel.participated {
+            setJoinDone()
+        } else {
+            joinButton.setTitle(viewModel.buttonPrice, for: .normal)
+        }
+        
+    }
+    
+    private func setJoinDone() {
+        joinButton.setTitle("결제 완료", for: .normal)
+        joinButton.setTitleColor(.gray, for: .normal)
+        joinButton.backgroundColor = .hbdPink
+        joinButton.isEnabled = false
     }
     
     
@@ -95,16 +144,6 @@ final class GiftCollectionViewCell: UICollectionViewCell {
             make.bottom.trailing.equalToSuperview().inset(12)
             make.size.equalTo(ContentSize.joinButton.size)
         }
-    }
-    
-    func setContent(_ content: PostModel) {
-        let viewModel = GiftCollectionViewCellViewModel(content)
-        
-        giftImageView.kf.setImage(with: viewModel.imageURL, options: [.requestModifier(viewModel.headerModifier)])
-        titleLabel.text = viewModel.title
-        priceLabel.text = viewModel.totalPrice
-        dueDayLabel.text = viewModel.deadLine
-        joinButton.setTitle(viewModel.buttonPrice, for: .normal)
     }
     
     

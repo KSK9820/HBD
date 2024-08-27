@@ -35,25 +35,44 @@ final class ProfileCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        profileView.setImage(UIImage(systemName: "star")!)
         disposeBag = DisposeBag()
     }
     
     
-    // MARK: - internal method
-    
-    func setImage(_ image: UIImage) {
-        profileView.setImage(image)
-    }
-    
-    func setName(_ name: String?) {
-        nameLabel.text = name
+    func setContent(_ user: Follow) {
+        nameLabel.text = user.nick
+        
+        if let profileImage = user.profileImage {
+            NetworkManager.shared.readImage(profileImage)
+                .map { result -> Data? in
+                    switch result {
+                    case .success(let imageData):
+                        return imageData
+                    case .failure(let error):
+                        print(error)
+                        return nil
+                    }
+                }
+                .asDriver(onErrorJustReturn: nil)
+                .drive(with: self) { owner, data in
+                    if let data {
+                        if let profileImage = UIImage(data: data) {
+                            owner.profileView.setImage(profileImage)
+                        }
+                    } else {
+                        owner.profileView.setImage(UIImage(systemName: "person")!)
+                    }
+                }
+                .disposed(by: disposeBag)
+        }
     }
     
     func toggleBorder(_ selected: Bool) {
         profileView.setBorder(selected)
     }
     
-    func setRadius() {
+    private func setRadius() {
         profileView.setRadius(ContentSize.profileImageCell.radius)
     }
     

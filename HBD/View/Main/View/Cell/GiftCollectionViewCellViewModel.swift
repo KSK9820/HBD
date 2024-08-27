@@ -6,46 +6,24 @@
 //
 
 import Foundation
-import Alamofire
-import Kingfisher
+import RxSwift
+import RxCocoa
+
 
 final class GiftCollectionViewCellViewModel {
     
     private var content: PostModel
+    private let disposeBag = DisposeBag()
     
     init(_ content: PostModel) {
         self.content = content
-    }
-    
-    private var image: HTTPRequestable {
-        return HBDRequest.readImage(link: content.files[0])
-    }
-    
-    var imageURL: URL {
-        do {
-            return try image.asURL()
-        } catch {
-            return URL(string: "")!
-        }
-    }
-    
-    // MARK: - HBDRequest에서 이미지 Data만 받아오게 변경 필요
-
-    var headerModifier: AnyModifier {
-        return AnyModifier { request in
-            var req = request
-            if let header = self.image.httpHeaders {
-                req.headers = HTTPHeaders(header)
-            }
-            return req
-        }
     }
     
     var title: String {
         return content.title
     }
     var totalPrice: String {
-        return "\(content.price) 원"
+        return "\(content.price) 원 / \(content.recruitment) 명"
     }
     var deadLine: String {
         guard let due = "\(content.recruitDeadline)".convertDate(.iso8601, to: .yymmdd_dash) else { return "" }
@@ -54,4 +32,58 @@ final class GiftCollectionViewCellViewModel {
     var buttonPrice: String {
         return "\(content.price / content.recruitment) 원"
     }
+    var participated: Bool {
+        content.likes.contains(UserDefaultsManager.shared.userID) 
+    }
+    
+    struct Input {
+        let joinButtonTap: ControlEvent<Void>
+    }
+    
+    struct Output {
+        let giftImageData: Observable<Data?>
+        let joinResponse: PublishSubject<Bool>
+    }
+    
+    func transform(_ input: Input) -> Output {
+        let joinResponse = PublishSubject<Bool>()
+        
+        let profileImage = content.files[0]
+        let giftImage =  NetworkManager.shared.readImage(profileImage)
+            .map { result -> Data? in
+                switch result {
+                case .success(let imageData):
+                    return imageData
+                case .failure(let error):
+                    print(error)
+                    return nil
+                }
+            }
+            .asObservable()
+        
+        
+        input.joinButtonTap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .flatMap {
+                NetworkManager.shared.joinPost(self.content.postID, status: true)
+                    .map { result -> Bool? in
+                        switch result {
+                        case .success(let like):
+                            return like.likeStatus
+                        case .failure(let error):
+                            print(error)
+                            return nil
+                        }
+                    }
+            }
+            .subscribe(with: self) { owner, response in
+                if let response {
+                    joinResponse.onNext(response)
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        return Output(giftImageData: giftImage, joinResponse: joinResponse)
+    }
+  
 }

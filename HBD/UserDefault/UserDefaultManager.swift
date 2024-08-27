@@ -39,6 +39,7 @@ final class UserDefaultsManager {
     enum UserDefaultsKey: String {
         case access
         case refresh
+        case userID
     }
     
     static let shared = UserDefaultsManager()
@@ -50,5 +51,8 @@ final class UserDefaultsManager {
     
     @UserDefaultType(key: UserDefaultsKey.refresh.rawValue, defaultValue: "")
     var refreshToken: String
+    
+    @UserDefaultType(key: UserDefaultsKey.userID.rawValue, defaultValue: "")
+    var userID: String
     
 }

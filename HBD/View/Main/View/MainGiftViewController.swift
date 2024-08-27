@@ -12,15 +12,23 @@ import RxDataSources
 
 final class MainGiftViewController: UIViewController {
     
-    private let viewModel = MainViewModel()
+    private let viewModel = MainGiftViewModel()
+    
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout()).then {
         $0.register(ProfileCollectionViewCell.self, forCellWithReuseIdentifier: ProfileCollectionViewCell.reuseIdentifier)
         $0.register(GiftCollectionViewCell.self, forCellWithReuseIdentifier: GiftCollectionViewCell.reuseIdentifier)
-        
     }
+    private let floatingButton = UIButton().then {
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: ContentSize.floatingButton.size.width / 2, weight: .bold)
+        let buttonImage = UIImage(systemName: "gift.fill", withConfiguration: imageConfig)
+        
+        $0.setImage(buttonImage, for: .normal)
+        $0.backgroundColor = UIColor.hbdMain
+        $0.tintColor = .white
+        $0.layer.cornerRadius = ContentSize.floatingButton.radius
+    }
+
     private let disposeBag = DisposeBag()
-    
-    let dummy = [Follow]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,19 +36,15 @@ final class MainGiftViewController: UIViewController {
         configureHierarchy()
         configureLayout()
         configureUI()
-        
-//        NetworkManager.shared.login(LoginQuery(email: "1@1", password: "1"))
-//        NetworkManager.shared.searchUser("hbd_3")
-//        NetworkManager.shared.getPosts("hbd_1", page: "")
-//        NetworkManager.shared.uploadPost(UploadPostQuery(title: "조말론 향수", price: 285000, content: "잉글리쉬 페어 앤 프리지아 또는 잉글리쉬 페어 앤 스윗 피 코롱으로 선물할 것 같습니다.", content1: "https://www.jomalone.co.kr/scents/fruity/english-pear-freesia", content2: "6", content3: "20241111", content4: "false", productID: "66c601bbfb4075f921416672", files: ["uploads/posts/jo_sku_L32R01_1000x1000_0_1724481203310.jpeg"]))
-        
         bind()
     }
     
     private func bind() {
-        let nowSelectProfile = BehaviorRelay(value: IndexPath(item: 0, section: 0))
         
-        let input = MainViewModel.Input(profileSelect: nowSelectProfile, userID: PublishSubject())
+        let nowSelectProfile = BehaviorRelay(value: IndexPath(item: 0, section: 0))
+        let selectPost = PublishRelay<IndexPath>()
+        
+        let input = MainGiftViewModel.Input(profileSelect: nowSelectProfile, userID: PublishSubject(), postSelect: selectPost, floatingButtonTap: floatingButton.rx.tap)
         let output = viewModel.transform(input: input)
         
         // collectionView
@@ -55,7 +59,8 @@ final class MainGiftViewController: UIViewController {
                 } else {
                     cell.toggleBorder(false)
                 }
-                cell.setName(followModel.nick)
+                
+                cell.setContent(followModel)
                 
                 return cell
             case let .ownerPostCell(postModel):
@@ -76,21 +81,45 @@ final class MainGiftViewController: UIViewController {
             .drive(collectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
         
+        output.selectedPostData
+            .compactMap { sectionItem -> PostModel? in
+                switch sectionItem {
+                case .otherPostCell(let postModel):
+                    return postModel
+                default:
+                    return nil
+                }
+            }
+            .subscribe(with: self) { owner, value in
+                let vc = DetailGiftViewController(content: value)
+                owner.navigationController?.pushViewController(vc, animated: false)
+            } onError: { owner, error in
+                print(error)
+            } onCompleted: { _ in
+                print("completed")
+            } onDisposed: { _ in
+                print("disposed")
+            }
+            .disposed(by: disposeBag)
+
+        output.floatingProfile
+            .subscribe(with: self) { owner, value in
+                print(value)
+            }
+            .disposed(by: disposeBag)
         
         collectionView.rx.itemSelected
             .subscribe(with: self) { owner, value in
                 switch value.section {
                 case 0:
                     nowSelectProfile.accept(value)
-                    break
-                case 2:
-                    owner.navigationController?.pushViewController(DetailGiftViewController(), animated: false)
+                case 1:
+                    selectPost.accept(value)
                 default:
                     break
                 }
             }
             .disposed(by: disposeBag)
-
     }
 
     
@@ -98,12 +127,18 @@ final class MainGiftViewController: UIViewController {
     
     private func configureHierarchy() {
         view.addSubview(collectionView)
+        view.addSubview(floatingButton)
     }
     
     private func configureLayout() {
         let safeArea = view.safeAreaLayoutGuide
+        
         collectionView.snp.makeConstraints { make in
             make.edges.equalTo(safeArea)
+        }
+        floatingButton.snp.makeConstraints { make in
+            make.trailing.bottom.equalTo(safeArea).inset(20)
+            make.size.equalTo(ContentSize.floatingButton.size)
         }
     }
     
@@ -116,10 +151,10 @@ final class MainGiftViewController: UIViewController {
             switch sectionIndex {
             case 0:
                 self?.createProfileSectionLayout()
-            case 2:
+            case 1:
                 self?.createGiftSectionLayout()
             default:
-                self?.createProfileSectionLayout()
+                self?.createGiftSectionLayout()
             }
         }
     }
@@ -153,23 +188,3 @@ final class MainGiftViewController: UIViewController {
 }
 
 
-struct MainSection {
-    var header: String
-    var items: [Item]
-}
-
-extension MainSection: SectionModelType {
-    typealias Item = MainsectionItem
-    
-    init(original: MainSection, items: [Item]) {
-        self = original
-        self.items = items
-    }
-}
-
-enum MainsectionItem {
-    case profileCell(Follow)
-    case ownerPostCell(PostModel)
-    case otherPostCell(PostModel)
-    case completedPostCell(PostModel)
-}
