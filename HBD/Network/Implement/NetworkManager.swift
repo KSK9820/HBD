@@ -14,8 +14,9 @@ final class NetworkManager {
     
     static let shared = NetworkManager()
     static let decoder = JSONDecoder()
+    private let disposeBag = DisposeBag()
     
-    private init() {}    
+    private init() {}
     
     func checkDuplicateEmail(_ email: String) {
         do {
@@ -79,6 +80,7 @@ final class NetworkManager {
                         case 200:
                             UserDefaultsManager.shared.accessToken = data.accessToken
                             UserDefaultsManager.shared.refreshToken = data.refreshToken
+                            UserDefaultsManager.shared.userID = data.userID
                         default:
                             print(data)
                         }
@@ -107,6 +109,7 @@ final class NetworkManager {
                         case .success(let data):
                             switch response.response?.statusCode {
                             case 200:
+                                print(data)
                                 single(.success(.success(data)))
                             default:
                                 break
@@ -116,14 +119,16 @@ final class NetworkManager {
                             case 401, 403:
                                 single(.success(.failure(error)))
                             case 419:
-                                self.refreshToken { status in
-                                    switch status {
-                                    case true:
-                                        self.getMyProfile()
-                                    case false:
-                                        single(.success(.failure(error)))
+                                self.refreshToken()
+                                    .subscribe(with: self) { owner, response in
+                                        switch response {
+                                        case .success(_):
+                                            owner.getMyProfile()
+                                        case .failure(let error):
+                                            print(error)
+                                        }
                                     }
-                                }
+                                    .disposed(by: self.disposeBag)
                             default:
                                 break
                             }
@@ -164,14 +169,16 @@ final class NetworkManager {
                 case 400, 401, 402, 403, 409:
                     print(error)
                 case 419:
-                    self.refreshToken { status in
-                        switch status {
-                        case true:
-                            self.updateMyProfile(profile)
-                        case false:
-                            print("갱신 실패")
+                    self.refreshToken()
+                        .subscribe(with: self) { owner, response in
+                            switch response {
+                            case .success(_):
+                                owner.updateMyProfile(profile)
+                            case .failure(let error):
+                                print(error)
+                            }
                         }
-                    }
+                        .disposed(by: self.disposeBag)
                 default:
                     break
                 }
@@ -198,14 +205,16 @@ final class NetworkManager {
                         case 401, 403:
                             print(error)
                         case 419:
-                            self.refreshToken { status in
-                                switch status {
-                                case true:
-                                    self.getOtherProfile(id)
-                                case false:
-                                    print("갱신 실패")
+                            self.refreshToken()
+                                .subscribe(with: self) { owner, response in
+                                    switch response {
+                                    case .success(_):
+                                        owner.getOtherProfile(id)
+                                    case .failure(let error):
+                                        print(error)
+                                    }
                                 }
-                            }
+                                .disposed(by: self.disposeBag)
                         default:
                             break
                         }
@@ -238,14 +247,16 @@ final class NetworkManager {
                 case 400, 401, 403:
                     print(error)
                 case 419:
-                    self.refreshToken { status in
-                        switch status {
-                        case true:
-                            self.uploadImage(images)
-                        case false:
-                            print("갱신 실패")
+                    self.refreshToken()
+                        .subscribe(with: self) { owner, response in
+                            switch response {
+                            case .success(_):
+                                owner.uploadImage(images)
+                            case .failure(let error):
+                                print(error)
+                            }
                         }
-                    }
+                        .disposed(by: self.disposeBag)
                 default:
                     break
                 }
@@ -272,14 +283,16 @@ final class NetworkManager {
                         case 401, 403:
                             print(error)
                         case 419:
-                            self.refreshToken { status in
-                                switch status {
-                                case true:
-                                    self.uploadPost(post)
-                                case false:
-                                    print("갱신 실패")
+                            self.refreshToken()
+                                .subscribe(with: self) { owner, response in
+                                    switch response {
+                                    case .success(_):
+                                        owner.uploadPost(post)
+                                    case .failure(let error):
+                                        print(error)
+                                    }
                                 }
-                            }
+                                .disposed(by: self.disposeBag)
                         default:
                             break
                         }
@@ -314,14 +327,16 @@ final class NetworkManager {
                             case 401, 403:
                                 single(.success(.failure(NetworkError.emptyDataError)))
                             case 419:
-                                self.refreshToken { status in
-                                    switch status {
-                                    case true:
-                                        self.getPosts(productID, page: page)
-                                    case false:
-                                        print("갱신 실패")
+                                self.refreshToken()
+                                    .subscribe(with: self) { owner, response in
+                                        switch response {
+                                        case .success(_):
+                                            owner.getPosts(productID, page: page)
+                                        case .failure(let error):
+                                            print(error)
+                                        }
                                     }
-                                }
+                                    .disposed(by: self.disposeBag)
                             default:
                                 break
                             }
@@ -353,14 +368,16 @@ final class NetworkManager {
                         case 401, 403:
                             print(error)
                         case 419:
-                            self.refreshToken { status in
-                                switch status {
-                                case true:
-                                    self.getaPost(postID)
-                                case false:
-                                    print("갱신 실패")
+                            self.refreshToken()
+                                .subscribe(with: self) { owner, response in
+                                    switch response {
+                                    case .success(_):
+                                        owner.getaPost(postID)
+                                    case .failure(let error):
+                                        print(error)
+                                    }
                                 }
-                            }
+                                .disposed(by: self.disposeBag)
                         default:
                             break
                         }
@@ -390,14 +407,16 @@ final class NetworkManager {
                         case 401, 403, 410, 445:
                             print(error)
                         case 419:
-                            self.refreshToken { status in
-                                switch status {
-                                case true:
-                                    self.deletePost(postID)
-                                case false:
-                                    print("갱신 실패")
+                            self.refreshToken()
+                                .subscribe(with: self) { owner, response in
+                                    switch response {
+                                    case .success(_):
+                                        owner.deletePost(postID)
+                                    case .failure(let error):
+                                        print(error)
+                                    }
                                 }
-                            }
+                                .disposed(by: self.disposeBag)
                         default:
                             break
                         }
@@ -408,40 +427,46 @@ final class NetworkManager {
         }
     }
     
-    func joinPost(_ postID: String, status: Bool) {
-        do {
-            let request = try HBDRequest.joinPost(postID: postID, status: status).asURLRequest()
-            
-            AF.request(request)
-                .responseDecodable(of: LikeDTO.self) { response in
-                    switch response.result {
-                    case .success(let data):
-                        switch response.response?.statusCode {
-                        case 200:
-                            print(data)
-                        default:
-                            break
-                        }
-                    case .failure(let error):
-                        switch  response.response?.statusCode {
-                        case 401, 403, 410, 445:
-                            print(error)
-                        case 419:
-                            self.refreshToken { status in
-                                switch status {
-                                case true:
-                                    self.joinPost(postID, status: status)
-                                case false:
-                                    print("갱신 실패")
-                                }
+    func joinPost(_ postID: String, status: Bool) ->  Single<Result<LikeDTO, Error>> {
+        return Single.create { single -> Disposable in
+            do {
+                let request = try HBDRequest.joinPost(postID: postID, status: status).asURLRequest()
+                
+                AF.request(request)
+                    .responseDecodable(of: LikeDTO.self) { response in
+                        switch response.result {
+                        case .success(let data):
+                            switch response.response?.statusCode {
+                            case 200:
+                                single(.success(.success(data)))
+                            default:
+                                break
                             }
-                        default:
-                            break
+                        case .failure(let error):
+                            switch  response.response?.statusCode {
+                            case 401, 403, 410, 445:
+                                single(.success(.failure(error)))
+                                print(error)
+                            case 419:
+                                self.refreshToken()
+                                    .subscribe(with: self) { owner, response in
+                                        switch response {
+                                        case .success(_):
+                                            owner.joinPost(postID, status: status)
+                                        case .failure(let error):
+                                            print(error)
+                                        }
+                                    }
+                                    .disposed(by: self.disposeBag)
+                            default:
+                                break
+                            }
                         }
                     }
-                }
-        } catch {
-            print(error)
+            } catch {
+                print(error)
+            }
+            return Disposables.create()
         }
     }
     
@@ -464,14 +489,16 @@ final class NetworkManager {
                         case 400, 401, 403, 410:
                             print(error)
                         case 419:
-                            self.refreshToken { status in
-                                switch status {
-                                case true:
-                                    self.updatePost(postID, post: post)
-                                case false:
-                                    print("갱신 실패")
+                            self.refreshToken()
+                                .subscribe(with: self) { owner, response in
+                                    switch response {
+                                    case .success(_):
+                                        owner.updatePost(postID, post: post)
+                                    case .failure(let error):
+                                        print(error)
+                                    }
                                 }
-                            }
+                                .disposed(by: self.disposeBag)
                         case 445:
                             print(error)
                         default:
@@ -503,14 +530,16 @@ final class NetworkManager {
                         case 401, 403:
                             print(error)
                         case 419:
-                            self.refreshToken { status in
-                                switch status {
-                                case true:
-                                    self.searchUser(nickname)
-                                case false:
-                                    print("갱신 실패")
+                            self.refreshToken()
+                                .subscribe(with: self) { owner, response in
+                                    switch response {
+                                    case .success(_):
+                                        owner.searchUser(nickname)
+                                    case .failure(let error):
+                                        print(error)
+                                    }
                                 }
-                            }
+                                .disposed(by: self.disposeBag)
                         default:
                             break
                         }
@@ -540,14 +569,16 @@ final class NetworkManager {
                         case 400, 401, 403, 409, 410:
                             print(error)
                         case 419:
-                            self.refreshToken { status in
-                                switch status {
-                                case true:
-                                    self.followUser(userID)
-                                case false:
-                                    print("갱신 실패")
+                            self.refreshToken()
+                                .subscribe(with: self) { owner, response in
+                                    switch response {
+                                    case .success(_):
+                                        owner.followUser(userID)
+                                    case .failure(let error):
+                                        print(error)
+                                    }
                                 }
-                            }
+                                .disposed(by: self.disposeBag)
                         default:
                             break
                         }
@@ -577,14 +608,16 @@ final class NetworkManager {
                         case 400, 401, 403, 409, 410:
                             print(error)
                         case 419:
-                            self.refreshToken { status in
-                                switch status {
-                                case true:
-                                    self.followUser(userID)
-                                case false:
-                                    print("갱신 실패")
+                            self.refreshToken()
+                                .subscribe(with: self) { owner, response in
+                                    switch response {
+                                    case .success(_):
+                                        owner.followUser(userID)
+                                    case .failure(let error):
+                                        print(error)
+                                    }
                                 }
-                            }
+                                .disposed(by: self.disposeBag)
                         default:
                             break
                         }
@@ -595,35 +628,81 @@ final class NetworkManager {
         }
     }
     
-    private func refreshToken(_ completion: @escaping (Bool) -> Void ) {
-        do {
-            let request = try HBDRequest.refreshToken.asURLRequest()
-            struct RefreshToken: Decodable {
-                let accessToken: String
-            }
-            AF.request(request)
-                .responseDecodable(of: RefreshToken.self) { response in
-                    switch response.result {
-                    case .success(let data):
-                        switch response.response?.statusCode {
-                        case 200:
-                            UserDefaultsManager.shared.accessToken = data.accessToken
-                            completion(true)
-                        default:
-                            print(data)
-                        }
-                    case .failure(let error):
-                        switch response.response?.statusCode {
-                        case 401, 403, 418:
-                            completion(false)
-                            print(error)
-                        default:
-                            break
+    func readImage(_ link: String) -> Single<Result<Data, Error>> {
+        return Single.create { single -> Disposable in
+            do {
+                let request = try HBDRequest.readImage(link: link).asURLRequest()
+                
+                AF.request(request)
+                    .response { response in
+                        switch response.result {
+                        case .success(let imageData):
+                            switch response.response?.statusCode {
+                            case 200:
+                                if let imageData {
+                                    single(.success(.success(imageData)))
+                                }
+                            default:
+                                break
+                            }
+                        case .failure(let error):
+                            switch  response.response?.statusCode {
+                            case 401, 403:
+                                single(.success(.failure(NetworkError.emptyDataError)))
+                            case 419:
+                                self.refreshToken()
+                                    .subscribe(with: self) { owner, response in
+                                        switch response {
+                                        case .success(_):
+                                            owner.readImage(link)
+                                        case .failure(let error):
+                                            print(error)
+                                        }
+                                    }
+                                    .disposed(by: self.disposeBag)
+                            default:
+                                break
+                            }
                         }
                     }
+            } catch {
+                print(error)
+            }
+            return Disposables.create()
+        }
+    }
+    
+    private func refreshToken() -> Single<Result<Bool, Error>> {
+        return Single.create { single -> Disposable in
+            do {
+                let request = try HBDRequest.refreshToken.asURLRequest()
+                struct RefreshToken: Decodable {
+                    let accessToken: String
                 }
-        } catch {
-            print(error)
+                AF.request(request)
+                    .responseDecodable(of: RefreshToken.self) { response in
+                        switch response.result {
+                        case .success(let data):
+                            switch response.response?.statusCode {
+                            case 200:
+                                UserDefaultsManager.shared.accessToken = data.accessToken
+                                single(.success(.success(true)))
+                            default:
+                                print(data)
+                            }
+                        case .failure(let error):
+                            switch response.response?.statusCode {
+                            case 401, 403, 418:
+                                single(.success(.failure(NetworkError.emptyDataError)))
+                            default:
+                                break
+                            }
+                        }
+                    }
+            } catch {
+                print(error)
+            }
+            return Disposables.create()
         }
     }
 }
