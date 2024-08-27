@@ -6,23 +6,30 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 final class ContentUserProfileView: UIView {
     
-//    private let profileImageURL: String
-    
+    private let creator: Creator
     private let profileView = ProfileView()
     private let nicknameLabel = UILabel()
     
+    private let disposeBag = DisposeBag()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
+    init(postUser: Creator) {
+        self.creator = postUser
+        super.init(frame: .zero)
         
         configureHierarchy()
         configureLayout()
         configureUI()
     }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     
     // MARK: - Configure UI
     
@@ -34,21 +41,45 @@ final class ContentUserProfileView: UIView {
     private func configureLayout() {
         profileView.snp.makeConstraints { make in
             make.size.equalTo(ContentSize.contentUserProfileImage.size)
-            make.leading.equalTo(10)
+            make.leading.equalTo(16)
             make.centerY.equalToSuperview()
         }
         nicknameLabel.snp.makeConstraints { make in
-            make.top.equalTo(profileView.snp.top)
             make.leading.equalTo(profileView.snp.trailing).offset(10)
+            make.centerY.equalTo(profileView)
         }
     }
     
     private func configureUI() {
-        profileView.setImage(UIImage(systemName: "star")!)
         profileView.setRadius(ContentSize.contentUserProfileImage.radius)
+        profileView.setBorder(true)
+        
+        if let profileImage = creator.profileImage {
+            NetworkManager.shared.readImage(profileImage)
+                .map { result -> Data? in
+                    switch result {
+                    case .success(let imageData):
+                        return imageData
+                    case .failure(let error):
+                        print(error)
+                    }
+                    return nil
+                }
+                .asDriver(onErrorJustReturn: nil)
+                .drive(with: self) { owner, value in
+                    if let data = value,
+                       let profileImage = UIImage(data: data) {
+                        owner.profileView.setImage(profileImage)
+                    } else {
+                        owner.profileView.setImage(UIImage(systemName: "person")!)
+                    }
+                }
+                .disposed(by: disposeBag)
+        } else {
+            profileView.setImage(UIImage(systemName: "person")!)
+        }
+        nicknameLabel.text = creator.nick
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    
 }
