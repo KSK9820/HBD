@@ -10,7 +10,9 @@ import Foundation
 extension String {
     enum StringDateFormat: String {
         case yyyyMMdd
-        case iso8601 = "yyyy-MM-dd'T'HH:mm:ssZ"
+        case iso8601 = "yyyy-MM-dd HH:mm:ss Z"
+        case yymmdd_dash = "yy-MM-dd"
+        
     }
     
     func convertDate(_ from: StringDateFormat, to: StringDateFormat) -> String? {

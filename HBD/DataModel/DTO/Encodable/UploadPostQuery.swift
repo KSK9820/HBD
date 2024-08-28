@@ -10,7 +10,7 @@ import Foundation
 struct UploadPostQuery: Encodable {
     let title: String
     let price: Int
-    let content: String
+    let content: String?
     let content1: String
     let content2: String
     let content3: String
@@ -22,4 +22,6 @@ struct UploadPostQuery: Encodable {
         case title, price, content, content1, content2, content3, content4, files
         case productID = "product_id"
     }
+    
+    
 }

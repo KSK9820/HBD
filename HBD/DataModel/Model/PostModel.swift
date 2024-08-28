@@ -13,7 +13,7 @@ struct PostModel {
     let title: String
     let price: Int
     let content: String
-    let link: String    // URL으로 변경 필요
+    let link: URL?
     let recruitment: Int
     let recruitDeadline: Date
     let recruitDone: Bool

@@ -22,6 +22,7 @@ enum HBDRequest {
     case updateProfile
     
     case createImage
+    case readImage(link: String)
     case createPost(post: UploadPostQuery)
     case readPost(postID: String)
     case readPosts(productID: String, page: String)
@@ -77,7 +78,7 @@ extension HBDRequest: HTTPRequestable {
         switch self {
         case .duplicateEmailCheck, .signin, .login, .createImage, .createPost, .joinPost, .followUser:
                 .post
-        case .refreshToken, .readMyProfile, .readOtherProfile, .readPost, .readPosts, .searchUser:
+        case .refreshToken, .readMyProfile, .readOtherProfile, .readPost, .readPosts, .searchUser, .readImage:
                 .get
         case .updateProfile, .updatePost:
                 .put
@@ -116,6 +117,8 @@ extension HBDRequest: HTTPRequestable {
             ["users", "search"]
         case .followUser(let id), .followCancel(let id):
             ["follow", id]
+        case .readImage(let link):
+            [link]
         }
     }
     
@@ -149,7 +152,7 @@ extension HBDRequest: HTTPRequestable {
                     HeaderContents.sesacKey.rawValue : try apiKey,
                     HeaderContents.refresh.rawValue : UserDefaultsManager.shared.refreshToken
                 ]
-            case .readMyProfile, .readOtherProfile, .readPost, .readPosts, .deletePost, .searchUser, .followUser, .followCancel:
+            case .readMyProfile, .readOtherProfile, .readPost, .readPosts, .deletePost, .searchUser, .followUser, .followCancel, .readImage:
                 return [
                     HeaderContents.sesacKey.rawValue : try apiKey,
                     HeaderContents.authorization.rawValue : UserDefaultsManager.shared.accessToken
