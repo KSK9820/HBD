@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import RxDataSources
+import Toast
 
 final class MainGiftViewController: UIViewController {
     
@@ -32,11 +33,21 @@ final class MainGiftViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+//        NetworkManager.shared.login(LoginQuery(email: "hbd0@com", password: "1"))
         configureHierarchy()
         configureLayout()
         configureUI()
         bind()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.isNavigationBarHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.isNavigationBarHidden = false
     }
     
     private func bind() {
@@ -104,7 +115,9 @@ final class MainGiftViewController: UIViewController {
 
         output.floatingProfile
             .subscribe(with: self) { owner, value in
-                print(value)
+                let vc = PostGiftViewController(id: value.userID)
+                vc.modalPresentationStyle = .overFullScreen
+                self.present(vc, animated: false)
             }
             .disposed(by: disposeBag)
         
@@ -144,8 +157,10 @@ final class MainGiftViewController: UIViewController {
     
     private func configureUI() {
         view.backgroundColor = .white
+        
     }
     
+
     func createLayout() -> UICollectionViewLayout {
         return UICollectionViewCompositionalLayout { [weak self] sectionIndex, environment in
             switch sectionIndex {

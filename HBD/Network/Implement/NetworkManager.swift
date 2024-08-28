@@ -225,69 +225,35 @@ final class NetworkManager {
         }
     }
     
-    func uploadImage(_ images: [Data]) {
-        let request = HBDRequest.createImage
-        
-        AF.upload(multipartFormData: { multipart in
-            for image in images {
-                multipart.append(image, withName: "files", fileName: image.base64EncodedString() + ".jpg", mimeType: "image/jpg")
-            }
-        }, with: request)
-        .responseDecodable(of: ImageResponse.self) { response in
-            switch response.result {
-            case .success(let data):
-                switch response.response?.statusCode {
-                case 200:
-                    print(data)
-                default:
-                    break
-                }
-            case .failure(let error):
-                switch  response.response?.statusCode {
-                case 400, 401, 403:
-                    print(error)
-                case 419:
-                    self.refreshToken()
-                        .subscribe(with: self) { owner, response in
-                            switch response {
-                            case .success(_):
-                                owner.uploadImage(images)
-                            case .failure(let error):
-                                print(error)
-                            }
-                        }
-                        .disposed(by: self.disposeBag)
-                default:
-                    break
-                }
-            }
-        }
-    }
-    
-    func uploadPost(_ post: UploadPostQuery) {
-        do {
-            let request = try HBDRequest.createPost(post: post).asURLRequest()
-            
-            AF.request(request)
-                .responseDecodable(of: PostResponse.self) { response in
+    func uploadImage(_ images: [Data]) -> Single<Result<[String], Error>> {
+        return Single.create { single -> Disposable in
+            do {
+                let request = try HBDRequest.createImage.asURLRequest()
+                
+                AF.upload(multipartFormData: { multipart in
+                    for image in images {
+                        multipart.append(image, withName: "files", fileName: UUID().uuidString + ".jpeg", mimeType: "image/jpeg")
+                    }
+                }, with: request)
+                .responseDecodable(of: ImageResponse.self) { response in
                     switch response.result {
                     case .success(let data):
                         switch response.response?.statusCode {
                         case 200:
-                            print(data)
+                            single(.success(.success(data.files)))
                         default:
                             break
                         }
                     case .failure(let error):
                         switch  response.response?.statusCode {
-                        case 401, 403:
-                            print(error)
+                        case 400, 401, 403:
+                            single(.success(.failure(NetworkError.emptyDataError)))
                         case 419:
                             self.refreshToken()
                                 .subscribe(with: self) { owner, response in
                                     switch response {
                                     case .success(_):
-                                        owner.uploadPost(post)
+                                        owner.uploadImage(images)
                                     case .failure(let error):
                                         print(error)
                                     }
@@ -298,8 +264,54 @@ final class NetworkManager {
                         }
                     }
                 }
-        } catch {
-            print(error)
+            }
+            catch {
+                print(error)
+            }
+
+            return Disposables.create()
+        }
+    }
+    
+    func uploadPost(_ post: UploadPostQuery) -> Single<Result<PostModel, Error>> {
+        return Single.create { single -> Disposable in
+            do {
+                let request = try HBDRequest.createPost(post: post).asURLRequest()
+                
+                AF.request(request)
+                    .responseDecodable(of: PostResponse.self) { response in
+                        switch response.result {
+                        case .success(let data):
+                            switch response.response?.statusCode {
+                            case 200:
+                                single(.success(.success(data.convertToPostModel())))
+                            default:
+                                break
+                            }
+                        case .failure(let error):
+                            switch  response.response?.statusCode {
+                            case 401, 403:
+                                single(.success(.failure(NetworkError.emptyDataError)))
+                            case 419:
+                                self.refreshToken()
+                                    .subscribe(with: self) { owner, response in
+                                        switch response {
+                                        case .success(_):
+                                            owner.uploadPost(post)
+                                        case .failure(let error):
+                                            print(error)
+                                        }
+                                    }
+                                    .disposed(by: self.disposeBag)
+                            default:
+                                break
+                            }
+                        }
+                    }
+            } catch {
+                print(error)
+            }
+            return Disposables.create()
         }
     }
     

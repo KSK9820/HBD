@@ -26,6 +26,7 @@ enum ContentSize {
     case joinButton
     case informationImage
     case floatingButton
+    case unit
 }
 
 extension ContentSize {
@@ -41,6 +42,8 @@ extension ContentSize {
             return CGSize(width: ContentSize.screenWidth * 0.3, height: ContentSize.screenWidth * 0.3)
         case .floatingButton:
             return CGSize(width: ContentSize.screenWidth * 0.15, height: ContentSize.screenWidth * 0.15)
+        case .unit:
+            return CGSize(width: ContentSize.screenWidth * 0.1, height: ContentSize.screenHeight * 0.1)
         }
     }
     var radius: CGFloat {

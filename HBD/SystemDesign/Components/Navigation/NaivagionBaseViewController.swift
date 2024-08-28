@@ -23,7 +23,6 @@ class NaivagionBaseViewController: UIViewController {
         configureBackButtonItem()
         addBottomLineToNavigationBar()
     }
- 
     
     private func configureBackButtonItem() {
         navigationItem.leftBarButtonItem = BlackLeftBarButtonItem(

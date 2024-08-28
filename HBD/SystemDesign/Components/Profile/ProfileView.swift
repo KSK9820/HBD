@@ -12,7 +12,6 @@ final class ProfileView: UIView {
     
     private lazy var imageView = UIImageView().then {
         $0.clipsToBounds = true
-        $0.image = UIImage(systemName: "star")
         $0.contentMode = .scaleAspectFill
     }
     

@@ -30,7 +30,7 @@ final class GiftCollectionViewCell: UICollectionViewCell {
     private let priceLabel = UILabel()
     private let dueDayLabel = UILabel()
     private let joinButton = UIButton().then {
-        $0.applyNeumorphismEffect(bgColor: .hbdMain, cornerRadius: 8)
+        $0.applyNeumorphismEffect(cornerRadius: 8, backgroundColor: .hbdMain)
         $0.setTitleColor(.white, for: .normal)
     }
     
@@ -83,9 +83,15 @@ final class GiftCollectionViewCell: UICollectionViewCell {
         if viewModel.participated {
             setJoinDone()
         } else {
-            joinButton.setTitle(viewModel.buttonPrice, for: .normal)
+            setNotJoin(viewModel.buttonPrice)
         }
         
+    }
+    
+    private func setNotJoin(_ price: String) {
+        joinButton.setTitle(price, for: .normal)
+        joinButton.setTitleColor(.white, for: .normal)
+        joinButton.backgroundColor = .hbdMain
     }
     
     private func setJoinDone() {
