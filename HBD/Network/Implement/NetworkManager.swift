@@ -523,42 +523,45 @@ final class NetworkManager {
         }
     }
     
-    func searchUser(_ nickname: String) {
-        do {
-            let request = try HBDRequest.searchUser(nickname: nickname).asURLRequest()
-            
-            AF.request(request)
-                .responseDecodable(of: SearchUserReponse.self) { response in
-                    switch response.result {
-                    case .success(let data):
-                        switch response.response?.statusCode {
-                        case 200:
-                            print(data)
-                        default:
-                            break
-                        }
-                    case .failure(let error):
-                        switch  response.response?.statusCode {
-                        case 401, 403:
-                            print(error)
-                        case 419:
-                            self.refreshToken()
-                                .subscribe(with: self) { owner, response in
-                                    switch response {
-                                    case .success(_):
-                                        owner.searchUser(nickname)
-                                    case .failure(let error):
-                                        print(error)
+    func searchUser(_ nickname: String)  ->  Single<Result<[SearchUser], Error>> {
+        return Single.create { single -> Disposable in
+            do {
+                let request = try HBDRequest.searchUser(nickname: nickname).asURLRequest()
+                
+                AF.request(request)
+                    .responseDecodable(of: SearchUserReponse.self) { response in
+                        switch response.result {
+                        case .success(let searchResult):
+                            switch response.response?.statusCode {
+                            case 200:
+                                single(.success(.success(searchResult.data)))
+                            default:
+                                break
+                            }
+                        case .failure(let error):
+                            switch  response.response?.statusCode {
+                            case 401, 403:
+                                single(.success(.failure(NetworkError.emptyDataError)))
+                            case 419:
+                                self.refreshToken()
+                                    .subscribe(with: self) { owner, response in
+                                        switch response {
+                                        case .success(_):
+                                            owner.searchUser(nickname)
+                                        case .failure(let error):
+                                            print(error)
+                                        }
                                     }
-                                }
-                                .disposed(by: self.disposeBag)
-                        default:
-                            break
+                                    .disposed(by: self.disposeBag)
+                            default:
+                                break
+                            }
                         }
                     }
-                }
-        } catch {
-            print(error)
+            } catch {
+                print(error)
+            }
+            return Disposables.create()
         }
     }
     

@@ -13,10 +13,10 @@ final class MainTabBarController: UITabBarController {
         super.viewDidLoad()
         
         tabBar.tintColor = .hbdMain
-        tabBar.unselectedItemTintColor = .hbdMelon
+        tabBar.unselectedItemTintColor = .darkGray
         
         let nav1VC = MainGiftViewController()
-        let nav2VC = UIViewController()
+        let nav2VC = FollowSearchViewController()
         
         
         let nav1 = UINavigationController(rootViewController: nav1VC)
@@ -26,6 +26,8 @@ final class MainTabBarController: UITabBarController {
         nav2.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "person"), tag: 1)
         
         setViewControllers([nav1, nav2], animated: false)
+        
+        selectedIndex = 1
     }
     
 }

@@ -33,7 +33,7 @@ final class MainGiftViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        NetworkManager.shared.login(LoginQuery(email: "hbd0@com", password: "1"))
+        NetworkManager.shared.login(LoginQuery(email: "hbd0@com", password: "1"))
         configureHierarchy()
         configureLayout()
         configureUI()

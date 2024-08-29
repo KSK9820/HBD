@@ -1,0 +1,43 @@
+//
+//  FollowSearchViewModel.swift
+//  HBD
+//
+//  Created by 김수경 on 8/29/24.
+//
+
+import Foundation
+import RxSwift
+import RxRelay
+
+final class FollowSearchViewModel {
+    
+    private let disposeBag = DisposeBag()
+    
+    struct Input {
+        let searchName: PublishRelay<String>
+    }
+    
+    struct Output {
+        let searchNameResult: PublishSubject<[SearchUser]>
+    }
+    
+    func transform(_ input: Input) -> Output {
+        let searchNameResult = PublishSubject<[SearchUser]>()
+        input.searchName
+            .flatMap {
+                NetworkManager.shared.searchUser($0)
+            }
+            .subscribe(with: self) { owner, response in
+                switch response {
+                case .success(let searchResult):
+                    searchNameResult.onNext(searchResult)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        return Output(searchNameResult: searchNameResult)
+    }
+    
+}
