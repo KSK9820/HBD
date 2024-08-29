@@ -7,7 +7,7 @@
 
 import Foundation
 import RxSwift
-import RxRelay
+import RxCocoa
 
 final class FollowSearchViewModel {
     
@@ -23,11 +23,12 @@ final class FollowSearchViewModel {
     
     func transform(_ input: Input) -> Output {
         let searchNameResult = PublishSubject<[SearchUser]>()
+        
         input.searchName
             .flatMap {
                 NetworkManager.shared.searchUser($0)
             }
-            .subscribe(with: self) { owner, response in
+            .subscribe(with: self) { _, response in
                 switch response {
                 case .success(let searchResult):
                     searchNameResult.onNext(searchResult)

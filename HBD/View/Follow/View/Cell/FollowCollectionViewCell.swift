@@ -12,19 +12,25 @@ final class FollowCollectionViewCell: UICollectionViewCell {
     
     private let backgroundFollowView = UIView().then {
         $0.applyNeumorphismEffect()
-        $0.clipsToBounds = true
         $0.layer.cornerRadius =  8
+        $0.layer.borderColor = UIColor.hbdMain.cgColor
+        $0.layer.borderWidth = 1
+        $0.backgroundColor = .white
     }
-    private let profileView = ProfileView()
+    private let profileView = ProfileView().then {
+        $0.setRadius(ContentSize.profileImageCell.radius - 10)
+    }
     private let nameLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16)
+        $0.font = .systemFont(ofSize: 18, weight: .semibold)
     }
     private let birthLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 14)
+        $0.font = .systemFont(ofSize: 16)
         $0.textColor = .hbdMain
     }
     private let followButton = UIButton().then {
         $0.layer.cornerRadius = 8
+        $0.backgroundColor = .hbdMain
+        $0.setTitleColor(.white, for: .normal)
     }
     
     private var disposeBag = DisposeBag()
@@ -32,7 +38,6 @@ final class FollowCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         configureHierarchy()
         configureLayout()
         configureUI()
@@ -60,14 +65,16 @@ final class FollowCollectionViewCell: UICollectionViewCell {
     
     private func configureLayout() {
         backgroundFollowView.snp.makeConstraints { make in
-            make.edges.equalTo(contentView).inset(12)
+            make.horizontalEdges.equalToSuperview().inset(20)
+            make.verticalEdges.equalToSuperview().inset(10)
         }
         profileView.snp.makeConstraints { make in
-            make.size.equalTo(ContentSize.profileImageCell.size)
-            make.leading.verticalEdges.equalTo(backgroundFollowView).inset(12)
+            make.leading.equalTo(backgroundFollowView).offset(12)
+            make.centerY.equalTo(backgroundFollowView.snp.centerY)
+            make.size.equalTo(ContentSize.profileImageCell.size.width - 20)
         }
         nameLabel.snp.makeConstraints { make in
-            make.leading.equalTo(profileView.snp.leading).offset(20)
+            make.leading.equalTo(profileView.snp.trailing).offset(20)
             make.top.equalTo(profileView.snp.top)
         }
         birthLabel.snp.makeConstraints { make in
@@ -84,15 +91,31 @@ final class FollowCollectionViewCell: UICollectionViewCell {
     private func configureUI() {
         
     }
-    
-    
-    
-    
+
     func setContents(_ follow: SearchUser) {
-        profileView.setImage(UIImage(systemName: "star")!)
         nameLabel.text = follow.nick
-        
         followButton.setTitle("팔로우", for: .normal)
+        
+        if let profileImage = follow.profileImage {
+            NetworkManager.shared.readImage(profileImage)
+                .compactMap { response -> UIImage? in
+                    switch response {
+                    case .success(let data):
+                        return UIImage(data: data)
+                    case .failure(_):
+                        return nil
+                    }
+                }
+                .asDriver(onErrorJustReturn: UIImage(systemName: "person.fill")!.withTintColor(.red))
+                .drive(with: self) { owner, image in
+                    owner.profileView.setImage(image)
+                }
+                .disposed(by: disposeBag)
+        } else {
+            let image = UIImage(systemName: "person.fill")!.withTintColor(.red)
+            profileView.setImage(image)
+        }
     }
 }
+
 

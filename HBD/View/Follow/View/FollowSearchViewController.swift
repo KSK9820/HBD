@@ -15,7 +15,8 @@ final class FollowSearchViewController: UIViewController {
     private let viewModel = FollowSearchViewModel()
     
     private let searchController = UISearchController(searchResultsController: nil)
-    private lazy var searchCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createSearchLayout()).then {
+    let searchFollowCollectionView = UICollectionView(frame: .zero, collectionViewLayout: FollowSearchViewController.createSearchLayout())
+        .then {
         $0.register(FollowCollectionViewCell.self, forCellWithReuseIdentifier: FollowCollectionViewCell.reuseIdentifier)
     }
     
@@ -45,39 +46,25 @@ final class FollowSearchViewController: UIViewController {
             .disposed(by: disposeBag)
         
         output.searchNameResult
-            .observe(on: MainScheduler.instance)
-            .subscribe(with: self) { owner, value in
-                owner.searchCollectionView.rx.items(cellIdentifier: FollowCollectionViewCell.reuseIdentifier, cellType: FollowCollectionViewCell.self) {
-                    
-                }
+            .asDriver(onErrorJustReturn: [])
+            .drive(searchFollowCollectionView.rx.items(cellIdentifier: FollowCollectionViewCell.reuseIdentifier, cellType: FollowCollectionViewCell.self)) { row, element, cell in
+                cell.setContents(element)
             }
-        //            .bind(with: self) { owner, value in
-        //                owner.searchCollectionView.rx.items(cellIdentifier: FollowCollectionViewCell.reuseIdentifier, cellType: FollowCollectionViewCell.self) { (row, element, cell) in
-        //
-        //
-        //                }
-        //            }
             .disposed(by: disposeBag)
-        
-        //        output.searchNameResult
-        //            .observe(on: MainScheduler.instance)
-        //            .bind(to: searchCollectionView.rx.items(cellIdentifier: FollowCollectionViewCell.reuseIdentifier, cellType: FollowCollectionViewCell.self) { (row, element, cell) in
-        //
-        //
-        //            })
-        //            .disposed(by: disposeBag)
-        
     }
     
-    
+
     // MARK: - Configure UI
     
     private func configureHierarchy() {
-        
+        view.addSubview(searchFollowCollectionView)
     }
     
     private func configureLayout() {
-        
+        let safeArea = view.safeAreaLayoutGuide
+        searchFollowCollectionView.snp.makeConstraints { make in
+            make.edges.equalTo(safeArea)
+        }
     }
     
     private func configureUI() {
@@ -92,11 +79,11 @@ final class FollowSearchViewController: UIViewController {
         searchController.searchBar.placeholder = "팔로우할 친구를 검색해보세요"
     }
     
-    private func createSearchLayout() -> UICollectionViewLayout {
+    static func createSearchLayout() -> UICollectionViewLayout {
         let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: size)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(ContentSize.screenWidth), heightDimension: .absolute(ContentSize.unit.size.height))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(ContentSize.screenWidth), heightDimension: .absolute(ContentSize.profileImageCell.size.height))
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
