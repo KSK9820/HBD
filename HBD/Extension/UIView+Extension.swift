@@ -29,5 +29,19 @@ extension UIView {
         
         self.layer.insertSublayer(highlightLayer, at: 0)
     }
+    
+    func findViewController() -> UIViewController? {
+        if let nextResponder = self.next as? UIViewController {
+            return nextResponder
+        } else if let nextResponder = self.next as? UIView {
+            return nextResponder.findViewController()
+        } else {
+            return nil
+        }
+    }
+    
+    func findNavigationController() -> UINavigationController? {
+        return findViewController()?.navigationController
+    }
 }
 

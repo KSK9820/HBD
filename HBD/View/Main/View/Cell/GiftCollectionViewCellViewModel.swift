@@ -23,21 +23,21 @@ final class GiftCollectionViewCellViewModel {
         return content.title
     }
     var totalPrice: String {
-        return "\(content.price) 원 / \(content.recruitment) 명"
+        return "\(content.totalPrice) 원 / \(content.recruitment) 명"
     }
     var deadLine: String {
         guard let due = "\(content.recruitDeadline)".convertDate(.iso8601, to: .yymmdd_dash) else { return "" }
         return "\(due) 마감"
     }
-    var buttonPrice: String {
-        return "\(content.price / content.recruitment) 원"
+    var personalPrice: String {
+        return "\(content.personalPrice) 원"
     }
     var participated: Bool {
         content.likes.contains(UserDefaultsManager.shared.userID) 
     }
     
     struct Input {
-        let joinButtonTap: ControlEvent<Void>
+        let paymentResult: PublishSubject<Bool>
     }
     
     struct Output {
@@ -62,10 +62,10 @@ final class GiftCollectionViewCellViewModel {
             .asObservable()
         
         
-        input.joinButtonTap
+        input.paymentResult
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .flatMap {
-                NetworkManager.shared.joinPost(self.content.postID, status: true)
+            .flatMap { value in
+                NetworkManager.shared.joinPost(self.content.postID, status: value)
                     .map { result -> Bool? in
                         switch result {
                         case .success(let like):

@@ -11,12 +11,12 @@ struct PostModel {
     let postID: String
     let productID: String
     let title: String
-    let price: Int
+    let personalPrice: Int
     let content: String
     let link: URL?
     let recruitment: Int
     let recruitDeadline: Date
-    let recruitDone: Bool
+    let totalPrice: Int
     let creator: Creator
     let files: [String]
     let likes: [String]

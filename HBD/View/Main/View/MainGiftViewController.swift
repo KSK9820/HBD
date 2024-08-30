@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 import Toast
+import Then
 
 final class MainGiftViewController: UIViewController {
     
@@ -33,7 +34,7 @@ final class MainGiftViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        NetworkManager.shared.login(LoginQuery(email: "hbd0@com", password: "1"))
+        
         configureHierarchy()
         configureLayout()
         configureUI()

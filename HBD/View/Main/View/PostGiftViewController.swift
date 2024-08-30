@@ -177,12 +177,12 @@ final class PostGiftViewController: UIViewController {
             .subscribe(with: self) { owner, stringImage in
                 let giftData = UploadPostQuery(
                     title: owner.titleTextField.text!,
-                    price: Int(owner.priceTextField.text!)!,
+                    price: Int(ceil(Double(owner.priceTextField.text!)!/Double(owner.recruitmentTextField.text!)!)),
                     content: owner.contentTextView.text!,
                     content1: owner.linkTextField.text!,
                     content2: owner.recruitmentTextField.text!,
                     content3: owner.deadLineTextField.text!,
-                    content4: "true",
+                    content4: owner.priceTextField.text!,
                     productID: owner.viewModel.followingID,
                     files: stringImage
                 )
@@ -196,7 +196,6 @@ final class PostGiftViewController: UIViewController {
                 switch result {
                 case true:
                     if let presentingVC = owner.presentingViewController {
-                        print("ss")
                         presentingVC.view.makeToast("🎁선물이 등록되었습니다🎁", duration: 1.0)
                     }
                     owner.dismiss(animated: false)

@@ -34,6 +34,7 @@ enum HBDRequest {
     case followUser(userID: String)
     case followCancel(userID: String)
     
+    case paymentValidation(payment: PaymentQuery)
 }
 
 extension HBDRequest: HTTPRequestable {
@@ -76,7 +77,7 @@ extension HBDRequest: HTTPRequestable {
     
     var httpMethod: Alamofire.HTTPMethod {
         switch self {
-        case .duplicateEmailCheck, .signin, .login, .createImage, .createPost, .joinPost, .followUser:
+        case .duplicateEmailCheck, .signin, .login, .createImage, .createPost, .joinPost, .followUser, .paymentValidation:
                 .post
         case .refreshToken, .readMyProfile, .readOtherProfile, .readPost, .readPosts, .searchUser, .readImage:
                 .get
@@ -119,6 +120,8 @@ extension HBDRequest: HTTPRequestable {
             ["follow", id]
         case .readImage(let link):
             [link]
+        case .paymentValidation:
+            ["payments", "validation"]
         }
     }
     
@@ -163,7 +166,7 @@ extension HBDRequest: HTTPRequestable {
                     HeaderContents.contentType.rawValue : HeaderContents.multi.rawValue,
                     HeaderContents.sesacKey.rawValue : try apiKey
                 ]
-            case .createPost, .joinPost, .updatePost:
+            case .createPost, .joinPost, .updatePost, .paymentValidation:
                 return [
                     HeaderContents.authorization.rawValue : UserDefaultsManager.shared.accessToken,
                     HeaderContents.contentType.rawValue : HeaderContents.json.rawValue,
@@ -220,7 +223,13 @@ extension HBDRequest: HTTPRequestable {
                 print(error)
             }
             return nil
-            
+        case .paymentValidation(let payment):
+            do {
+                return try HBDRequest.encoder.encode(payment)
+            } catch {
+                print(error)
+            }
+            return nil
         default:
             return nil
         }

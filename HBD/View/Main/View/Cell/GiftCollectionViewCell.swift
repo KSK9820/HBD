@@ -8,6 +8,9 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Then
+import WebKit
+import Toast
 
 final class GiftCollectionViewCell: UICollectionViewCell {
     
@@ -34,6 +37,12 @@ final class GiftCollectionViewCell: UICollectionViewCell {
         $0.setTitleColor(.white, for: .normal)
     }
     
+    lazy var wkWebView: WKWebView = {
+        var view = WKWebView()
+        view.backgroundColor = UIColor.clear
+        return view
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -53,8 +62,9 @@ final class GiftCollectionViewCell: UICollectionViewCell {
     
     func setContent(_ content: PostModel) {
         let viewModel = GiftCollectionViewCellViewModel(content)
+        let paymentResult = PublishSubject<Bool>()
         
-        let input = GiftCollectionViewCellViewModel.Input(joinButtonTap: joinButton.rx.tap)
+        let input = GiftCollectionViewCellViewModel.Input(paymentResult: paymentResult)
         let output = viewModel.transform(input)
             
         output.giftImageData
@@ -68,10 +78,24 @@ final class GiftCollectionViewCell: UICollectionViewCell {
             }
             .disposed(by: disposeBag)
         
+        
+        joinButton.rx.tap
+            .subscribe(with: self) { owner, _ in
+                if let navigationController = self.findNavigationController() {
+                    PaymentManager.shared.pay(price: viewModel.personalPrice, itemName: viewModel.title, nav: navigationController, postID: content.postID)
+                        .subscribe { response in
+                            paymentResult.onNext(response)
+                        }
+                        .disposed(by: owner.disposeBag)
+                }
+            }
+            .disposed(by: disposeBag)
+        
         output.joinResponse
             .subscribe(with: self) { owner, like in
                 if like {
                     owner.setJoinDone()
+                    owner.makeToast("결제 성공하였습니다!")
                 }
             }
             .disposed(by: disposeBag)
@@ -83,7 +107,7 @@ final class GiftCollectionViewCell: UICollectionViewCell {
         if viewModel.participated {
             setJoinDone()
         } else {
-            setNotJoin(viewModel.buttonPrice)
+            setNotJoin(viewModel.personalPrice)
         }
         
     }
