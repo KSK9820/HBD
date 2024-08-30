@@ -9,6 +9,7 @@ import UIKit
 import RxCocoa
 import RxSwift
 import SnapKit
+import Then
 
 final class FollowSearchViewController: UIViewController {
     

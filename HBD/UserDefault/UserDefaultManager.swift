@@ -40,6 +40,7 @@ final class UserDefaultsManager {
         case access
         case refresh
         case userID
+        case userName
     }
     
     static let shared = UserDefaultsManager()
@@ -54,5 +55,8 @@ final class UserDefaultsManager {
     
     @UserDefaultType(key: UserDefaultsKey.userID.rawValue, defaultValue: "")
     var userID: String
+    
+    @UserDefaultType(key: UserDefaultsKey.userName.rawValue, defaultValue: "")
+    var userName: String
     
 }

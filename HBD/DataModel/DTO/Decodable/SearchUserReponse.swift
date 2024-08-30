@@ -21,4 +21,8 @@ struct SearchUser: Decodable {
         case nick
         case profileImage
     }
+    
+    func converToFollow() -> Follow {
+        return Follow(userID: userID, nick: nick, profileImage: profileImage)
+    }
 }

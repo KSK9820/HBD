@@ -18,11 +18,11 @@ final class FollowSearchViewModel {
     }
     
     struct Output {
-        let searchNameResult: PublishSubject<[SearchUser]>
+        let searchNameResult: PublishSubject<[Follow]>
     }
     
     func transform(_ input: Input) -> Output {
-        let searchNameResult = PublishSubject<[SearchUser]>()
+        let searchNameResult = PublishSubject<[Follow]>()
         
         input.searchName
             .flatMap {

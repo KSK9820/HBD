@@ -31,6 +31,7 @@ final class FollowCollectionViewCell: UICollectionViewCell {
         $0.layer.cornerRadius = 8
         $0.backgroundColor = .hbdMain
         $0.setTitleColor(.white, for: .normal)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
     }
     
     private var disposeBag = DisposeBag()
@@ -75,11 +76,11 @@ final class FollowCollectionViewCell: UICollectionViewCell {
         }
         nameLabel.snp.makeConstraints { make in
             make.leading.equalTo(profileView.snp.trailing).offset(20)
-            make.top.equalTo(profileView.snp.top)
+            make.bottom.equalTo(backgroundFollowView.snp.centerY).offset(-4)
         }
         birthLabel.snp.makeConstraints { make in
-            make.leading.equalTo(profileView.snp.leading).offset(20)
-            make.top.equalTo(nameLabel.snp.top).offset(10)
+            make.leading.equalTo(profileView.snp.trailing).offset(20)
+            make.top.equalTo(backgroundFollowView.snp.centerY).offset(4)
         }
         
         followButton.snp.makeConstraints { make in
@@ -92,10 +93,12 @@ final class FollowCollectionViewCell: UICollectionViewCell {
         
     }
 
-    func setContents(_ follow: SearchUser) {
+    func setContents(_ follow: Follow) {
         nameLabel.text = follow.nick
         followButton.setTitle("팔로우", for: .normal)
-        
+        if let birthDay = follow.birthDay {
+            birthLabel.text = birthDay
+        }
         if let profileImage = follow.profileImage {
             NetworkManager.shared.readImage(profileImage)
                 .compactMap { response -> UIImage? in

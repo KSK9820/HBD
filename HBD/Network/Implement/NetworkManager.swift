@@ -81,6 +81,7 @@ final class NetworkManager {
                             UserDefaultsManager.shared.accessToken = data.accessToken
                             UserDefaultsManager.shared.refreshToken = data.refreshToken
                             UserDefaultsManager.shared.userID = data.userID
+                            UserDefaultsManager.shared.userName = data.nick
                         default:
                             print(data)
                         }
@@ -523,7 +524,7 @@ final class NetworkManager {
         }
     }
     
-    func searchUser(_ nickname: String)  ->  Single<Result<[SearchUser], Error>> {
+    func searchUser(_ nickname: String)  ->  Single<Result<[Follow], Error>> {
         return Single.create { single -> Disposable in
             do {
                 let request = try HBDRequest.searchUser(nickname: nickname).asURLRequest()
@@ -534,7 +535,8 @@ final class NetworkManager {
                         case .success(let searchResult):
                             switch response.response?.statusCode {
                             case 200:
-                                single(.success(.success(searchResult.data)))
+                                let result = searchResult.data.map { $0.converToFollow() }
+                                single(.success(.success(result)))
                             default:
                                 break
                             }
@@ -687,6 +689,50 @@ final class NetworkManager {
         }
     }
     
+    func paymentValidation(_ payment: PaymentQuery) -> Single<Result<PaymentResponse, Error>> {
+        return Single.create { single -> Disposable in
+            do {
+                
+                let request = try HBDRequest.paymentValidation(payment: payment).asURLRequest()
+                
+                AF.request(request)
+                    .responseDecodable(of: PaymentResponse.self) { response in
+                        switch response.result {
+                        case .success(let data):
+                            switch response.response?.statusCode {
+                            case 200:
+                                single(.success(.success(data)))
+                            default:
+                                break
+                            }
+                        case .failure(let error):
+                            switch  response.response?.statusCode {
+                            case 401, 403:
+                                single(.success(.failure(NetworkError.emptyDataError)))
+                            case 419:
+                                self.refreshToken()
+                                    .subscribe(with: self) { owner, response in
+                                        switch response {
+                                        case .success(_):
+                                            owner.paymentValidation(payment)
+                                        case .failure(let error):
+                                            print(error)
+                                        }
+                                    }
+                                    .disposed(by: self.disposeBag)
+                            default:
+                                break
+                            }
+                        }
+                    }
+            } catch {
+                print(error)
+            }
+            return Disposables.create()
+        }
+    }
+    
+    
     private func refreshToken() -> Single<Result<Bool, Error>> {
         return Single.create { single -> Disposable in
             do {
@@ -708,7 +754,8 @@ final class NetworkManager {
                         case .failure(let error):
                             switch response.response?.statusCode {
                             case 401, 403, 418:
-                                single(.success(.failure(NetworkError.emptyDataError)))
+                                self.login(LoginQuery(email: "hbd0@com", password: "1"))
+                                //single(.success(.failure(NetworkError.emptyDataError)))
                             default:
                                 break
                             }
@@ -720,4 +767,5 @@ final class NetworkManager {
             return Disposables.create()
         }
     }
+
 }

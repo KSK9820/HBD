@@ -16,13 +16,13 @@ final class GiftInformationViewModel {
         content.title
     }
     var totalPrice: String {
-        "\(content.price)원"
+        "\(content.totalPrice)원"
     }
     var recruitmentNumber: String {
         "\(content.recruitment)명"
     }
     var personalPrice: String {
-        "\(content.price / content.recruitment)원"
+        "\(content.personalPrice) 원"
     }
     var deadLine: String? {
         "\(content.recruitDeadline)".convertDate(.iso8601, to: .yymmdd_dash)
@@ -41,7 +41,6 @@ final class GiftInformationViewModel {
     }
     
     func transform(_ input: Input) -> Output {
-        
         let profileImage = content.files[0]
         let giftImage =  NetworkManager.shared.readImage(profileImage)
             .map { result -> Data? in

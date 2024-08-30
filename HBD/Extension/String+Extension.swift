@@ -26,5 +26,13 @@ extension String {
         dateFormatter.dateFormat = to.rawValue
         return dateFormatter.string(from: date)
     }
+    
+    func convertToDate() -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        let date = dateFormatter.date(from: self) ?? Date()
+        return date
+    }
+
 }
 

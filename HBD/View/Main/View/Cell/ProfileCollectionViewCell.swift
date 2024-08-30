@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import RxSwift
+import Then
 
 final class ProfileCollectionViewCell: UICollectionViewCell {
     
