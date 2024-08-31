@@ -43,7 +43,6 @@ final class FollowCollectionViewCell: UICollectionViewCell {
         
         configureHierarchy()
         configureLayout()
-        configureUI()
     }
     
     required init?(coder: NSCoder) {
@@ -142,6 +141,10 @@ final class FollowCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    func setHideButton() {
+        followButton.isHidden = true
+    }
+    
     
     // MARK: - Configure UI
     
@@ -175,11 +178,6 @@ final class FollowCollectionViewCell: UICollectionViewCell {
             make.trailing.equalTo(backgroundFollowView.snp.trailing).offset(-12)
         }
     }
-    
-    private func configureUI() {
-        
-    }
-
     
 }
 

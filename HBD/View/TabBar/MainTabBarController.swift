@@ -15,15 +15,15 @@ final class MainTabBarController: UITabBarController {
         tabBar.tintColor = .hbdMain
         tabBar.unselectedItemTintColor = .darkGray
         
-        let nav1VC = MainGiftViewController()
-        let nav2VC = FollowSearchViewController()
+        let nav1VC = FollowSearchViewController()
+        let nav2VC = MainGiftViewController()
         
         
         let nav1 = UINavigationController(rootViewController: nav1VC)
-        nav1.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "gift"), tag: 0)
+        nav1.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "magnifyingglass"), tag: 0)
         
         let nav2 = UINavigationController(rootViewController: nav2VC)
-        nav2.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "person"), tag: 1)
+        nav2.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "gift"), tag: 1)
         
         setViewControllers([nav1, nav2], animated: false)
         

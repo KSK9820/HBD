@@ -20,6 +20,9 @@
 		5320E8142C7488C300F01CC1 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5320E8132C7488C300F01CC1 /* String+Extension.swift */; };
 		532B7A442C81738E00F8F35B /* PaymentQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532B7A432C81738E00F8F35B /* PaymentQuery.swift */; };
 		532B7A462C81744700F8F35B /* PaymentResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532B7A452C81744700F8F35B /* PaymentResponse.swift */; };
+		533A54CD2C8381BC002D97B6 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533A54CC2C8381BC002D97B6 /* CalendarViewModel.swift */; };
+		533A54CF2C838B67002D97B6 /* CalendarBirthDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533A54CE2C838B67002D97B6 /* CalendarBirthDay.swift */; };
+		533A54D32C83AAB4002D97B6 /* UICollectionViewLayout+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533A54D22C83AAB4002D97B6 /* UICollectionViewLayout+Extension.swift */; };
 		534249A72C7C95B4005E0206 /* NaivagionBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534249A62C7C95B4005E0206 /* NaivagionBaseViewController.swift */; };
 		534249A92C7C95EB005E0206 /* BlackLeftBarButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534249A82C7C95EB005E0206 /* BlackLeftBarButtonItem.swift */; };
 		534249AF2C7CE14A005E0206 /* GiftInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534249AE2C7CE14A005E0206 /* GiftInformationView.swift */; };
@@ -57,6 +60,7 @@
 		53BBBDD02C7B9CEA00ADA499 /* GiftCollectionViewCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BBBDCF2C7B9CEA00ADA499 /* GiftCollectionViewCellViewModel.swift */; };
 		53BBBDD32C7B9D7F00ADA499 /* DetailGiftViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BBBDD22C7B9D7F00ADA499 /* DetailGiftViewController.swift */; };
 		53BBBDD52C7B9E5D00ADA499 /* DetailGiftViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BBBDD42C7B9E5D00ADA499 /* DetailGiftViewModel.swift */; };
+		53BE71ED2C837794003DE9C9 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BE71EC2C837794003DE9C9 /* CalendarViewController.swift */; };
 		53D196A62C7CF73400301C32 /* GiftInformationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D196A52C7CF73400301C32 /* GiftInformationViewModel.swift */; };
 		53E1F2CA2C736E29005A6297 /* UserDefaultManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E1F2A62C736E29005A6297 /* UserDefaultManager.swift */; };
 		53E1F2CB2C736E29005A6297 /* HeaderContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E1F2A82C736E29005A6297 /* HeaderContents.swift */; };
@@ -87,6 +91,9 @@
 		5320E8132C7488C300F01CC1 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		532B7A432C81738E00F8F35B /* PaymentQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentQuery.swift; sourceTree = "<group>"; };
 		532B7A452C81744700F8F35B /* PaymentResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentResponse.swift; sourceTree = "<group>"; };
+		533A54CC2C8381BC002D97B6 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
+		533A54CE2C838B67002D97B6 /* CalendarBirthDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarBirthDay.swift; sourceTree = "<group>"; };
+		533A54D22C83AAB4002D97B6 /* UICollectionViewLayout+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionViewLayout+Extension.swift"; sourceTree = "<group>"; };
 		534249A62C7C95B4005E0206 /* NaivagionBaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaivagionBaseViewController.swift; sourceTree = "<group>"; };
 		534249A82C7C95EB005E0206 /* BlackLeftBarButtonItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlackLeftBarButtonItem.swift; sourceTree = "<group>"; };
 		534249AE2C7CE14A005E0206 /* GiftInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftInformationView.swift; sourceTree = "<group>"; };
@@ -119,6 +126,7 @@
 		53BBBDCF2C7B9CEA00ADA499 /* GiftCollectionViewCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftCollectionViewCellViewModel.swift; sourceTree = "<group>"; };
 		53BBBDD22C7B9D7F00ADA499 /* DetailGiftViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailGiftViewController.swift; sourceTree = "<group>"; };
 		53BBBDD42C7B9E5D00ADA499 /* DetailGiftViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailGiftViewModel.swift; sourceTree = "<group>"; };
+		53BE71EC2C837794003DE9C9 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		53D196A52C7CF73400301C32 /* GiftInformationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftInformationViewModel.swift; sourceTree = "<group>"; };
 		53E1F2A32C736DA6005A6297 /* APIKey.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = APIKey.xcconfig; sourceTree = "<group>"; };
 		53E1F2A62C736E29005A6297 /* UserDefaultManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultManager.swift; sourceTree = "<group>"; };
@@ -169,6 +177,7 @@
 				53A429602C7651970019FC95 /* UIView+Extension.swift */,
 				531271322C7E486F00F5AF25 /* UITextView+Extension.swift */,
 				531271342C7E488C00F5AF25 /* UITextField+Extension.swift */,
+				533A54D22C83AAB4002D97B6 /* UICollectionViewLayout+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -233,6 +242,7 @@
 			isa = PBXGroup;
 			children = (
 				535C11E82C7F96570047377A /* FollowSearchViewModel.swift */,
+				533A54CC2C8381BC002D97B6 /* CalendarViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -240,6 +250,7 @@
 		535C11E52C7F96400047377A /* View */ = {
 			isa = PBXGroup;
 			children = (
+				53BE71EC2C837794003DE9C9 /* CalendarViewController.swift */,
 				53AC9D512C80313800838307 /* Cell */,
 				535C11E62C7F964D0047377A /* FollowSearchViewController.swift */,
 			);
@@ -462,6 +473,7 @@
 				53E1F2E22C7376C6005A6297 /* UserModel.swift */,
 				53E1F2E42C738310005A6297 /* UpdateProfileModel.swift */,
 				5320E80E2C74862F00F01CC1 /* PostModel.swift */,
+				533A54CE2C838B67002D97B6 /* CalendarBirthDay.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -588,6 +600,8 @@
 				531271352C7E488C00F5AF25 /* UITextField+Extension.swift in Sources */,
 				53E1F2DB2C736E29005A6297 /* LoginQuery.swift in Sources */,
 				536F5C672C80318E00E20706 /* FollowCollectionViewCell.swift in Sources */,
+				533A54CF2C838B67002D97B6 /* CalendarBirthDay.swift in Sources */,
+				53BE71ED2C837794003DE9C9 /* CalendarViewController.swift in Sources */,
 				53A4293A2C7605C80019FC95 /* FollowResponse.swift in Sources */,
 				53BBBDD32C7B9D7F00ADA499 /* DetailGiftViewController.swift in Sources */,
 				53A4291A2C74AC560019FC95 /* PostsResponse.swift in Sources */,
@@ -612,6 +626,8 @@
 				53465A192C81B4D40077D805 /* FollowCollectionViewModel.swift in Sources */,
 				535C11E92C7F96580047377A /* FollowSearchViewModel.swift in Sources */,
 				53E1F2CA2C736E29005A6297 /* UserDefaultManager.swift in Sources */,
+				533A54D32C83AAB4002D97B6 /* UICollectionViewLayout+Extension.swift in Sources */,
+				533A54CD2C8381BC002D97B6 /* CalendarViewModel.swift in Sources */,
 				53A429442C76102D0019FC95 /* MainGiftViewController.swift in Sources */,
 				5320E80C2C747F4F00F01CC1 /* PostResponse.swift in Sources */,
 				532B7A462C81744700F8F35B /* PaymentResponse.swift in Sources */,
