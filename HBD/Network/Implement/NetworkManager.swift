@@ -524,7 +524,7 @@ final class NetworkManager {
         }
     }
     
-    func searchUser(_ nickname: String)  ->  Single<Result<[Follow], Error>> {
+    func searchUser(_ nickname: String)  ->  Single<Result<[SearchUser], Error>> {
         return Single.create { single -> Disposable in
             do {
                 let request = try HBDRequest.searchUser(nickname: nickname).asURLRequest()
@@ -535,8 +535,7 @@ final class NetworkManager {
                         case .success(let searchResult):
                             switch response.response?.statusCode {
                             case 200:
-                                let result = searchResult.data.map { $0.converToFollow() }
-                                single(.success(.success(result)))
+                                single(.success(.success(searchResult.data)))
                             default:
                                 break
                             }
@@ -567,81 +566,87 @@ final class NetworkManager {
         }
     }
     
-    func followUser(_ userID: String) {
-        do {
-            let request = try HBDRequest.followUser(userID: userID).asURLRequest()
-            
-            AF.request(request)
-                .responseDecodable(of: FollowUserResponse.self) { response in
-                    switch response.result {
-                    case .success(let data):
-                        switch response.response?.statusCode {
-                        case 200:
-                            print(data)
-                        default:
-                            break
-                        }
-                    case .failure(let error):
-                        switch  response.response?.statusCode {
-                        case 400, 401, 403, 409, 410:
-                            print(error)
-                        case 419:
-                            self.refreshToken()
-                                .subscribe(with: self) { owner, response in
-                                    switch response {
-                                    case .success(_):
-                                        owner.followUser(userID)
-                                    case .failure(let error):
-                                        print(error)
+    func followUser(_ userID: String) -> Single<Result<Bool, Error>> {
+        return Single.create { single -> Disposable in
+            do {
+                let request = try HBDRequest.followUser(userID: userID).asURLRequest()
+                
+                AF.request(request)
+                    .responseDecodable(of: FollowUserResponse.self) { response in
+                        switch response.result {
+                        case .success(let data):
+                            switch response.response?.statusCode {
+                            case 200:
+                                single(.success(.success(true)))
+                            default:
+                                break
+                            }
+                        case .failure(let error):
+                            switch  response.response?.statusCode {
+                            case 400, 401, 403, 409, 410:
+                                single(.success(.failure(NetworkError.emptyDataError)))
+                            case 419:
+                                self.refreshToken()
+                                    .subscribe(with: self) { owner, response in
+                                        switch response {
+                                        case .success(_):
+                                            owner.followUser(userID)
+                                        case .failure(let error):
+                                            print(error)
+                                        }
                                     }
-                                }
-                                .disposed(by: self.disposeBag)
-                        default:
-                            break
+                                    .disposed(by: self.disposeBag)
+                            default:
+                                break
+                            }
                         }
                     }
-                }
-        } catch {
-            print(error)
+            } catch {
+                print(error)
+            }
+            return Disposables.create()
         }
     }
     
-    func followCancel(_ userID: String) {
-        do {
-            let request = try HBDRequest.followCancel(userID: userID).asURLRequest()
-            
-            AF.request(request)
-                .responseDecodable(of: FollowUserResponse.self) { response in
-                    switch response.result {
-                    case .success(let data):
-                        switch response.response?.statusCode {
-                        case 200:
-                            print(data)
-                        default:
-                            break
-                        }
-                    case .failure(let error):
-                        switch  response.response?.statusCode {
-                        case 400, 401, 403, 409, 410:
-                            print(error)
-                        case 419:
-                            self.refreshToken()
-                                .subscribe(with: self) { owner, response in
-                                    switch response {
-                                    case .success(_):
-                                        owner.followUser(userID)
-                                    case .failure(let error):
-                                        print(error)
+    func followCancel(_ userID: String) -> Single<Result<Bool, Error>> {
+        return Single.create { single -> Disposable in
+            do {
+                let request = try HBDRequest.followCancel(userID: userID).asURLRequest()
+                
+                AF.request(request)
+                    .responseDecodable(of: FollowUserResponse.self) { response in
+                        switch response.result {
+                        case .success(let data):
+                            switch response.response?.statusCode {
+                            case 200:
+                                single(.success(.success(true)))
+                            default:
+                                break
+                            }
+                        case .failure(let error):
+                            switch  response.response?.statusCode {
+                            case 400, 401, 403, 409, 410:
+                                single(.success(.failure(error)))
+                            case 419:
+                                self.refreshToken()
+                                    .subscribe(with: self) { owner, response in
+                                        switch response {
+                                        case .success(_):
+                                            owner.followUser(userID)
+                                        case .failure(let error):
+                                            print(error)
+                                        }
                                     }
-                                }
-                                .disposed(by: self.disposeBag)
-                        default:
-                            break
+                                    .disposed(by: self.disposeBag)
+                            default:
+                                break
+                            }
                         }
                     }
-                }
-        } catch {
-            print(error)
+            } catch {
+                print(error)
+            }
+            return Disposables.create()
         }
     }
     
@@ -662,7 +667,7 @@ final class NetworkManager {
                             default:
                                 break
                             }
-                        case .failure(let error):
+                        case .failure(_):
                             switch  response.response?.statusCode {
                             case 401, 403:
                                 single(.success(.failure(NetworkError.emptyDataError)))

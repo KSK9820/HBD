@@ -7,8 +7,11 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 final class FollowCollectionViewCell: UICollectionViewCell {
+    
+    private let viewModel = FollowCollectionViewModel()
     
     private let backgroundFollowView = UIView().then {
         $0.applyNeumorphismEffect()
@@ -29,8 +32,6 @@ final class FollowCollectionViewCell: UICollectionViewCell {
     }
     private let followButton = UIButton().then {
         $0.layer.cornerRadius = 8
-        $0.backgroundColor = .hbdMain
-        $0.setTitleColor(.white, for: .normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
     }
     
@@ -39,6 +40,7 @@ final class FollowCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
         configureHierarchy()
         configureLayout()
         configureUI()
@@ -50,7 +52,94 @@ final class FollowCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        
         disposeBag = DisposeBag()
+        nameLabel.text = nil
+        birthLabel.text = nil
+        profileView.setImage(nil)
+        viewModel.initUser()
+    }
+    
+    func bind() {
+        let followUser = PublishSubject<String>()
+        let unfollowUser = PublishSubject<String>()
+        
+        let input = FollowCollectionViewModel.Input(follow: followUser, unfollow: unfollowUser)
+        let output = viewModel.transform(input)
+        
+        followButton.rx.tap
+            .subscribe(with: self) { owner, _ in
+                guard let following = owner.viewModel.isFollowing else { return }
+                guard let userID = owner.viewModel.userID else { return }
+                
+                if following {
+                    followUser.onNext(userID)
+                } else {
+                    unfollowUser.onNext(userID)
+                }
+            }
+            .disposed(by: disposeBag)
+            
+        output.followResult
+            .subscribe(with: self) { owner, value in
+                if value {
+                    owner.viewModel.setFollowing(true)
+                    owner.setFollowingStatus()
+                }
+            }
+            .disposed(by: disposeBag)
+            
+        output.unfollowResult
+            .subscribe(with: self) { owner, value in
+                if value {
+                    owner.viewModel.setFollowing(false)
+                    owner.setFollowingStatus()
+                }
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    func setContents(_ user: SearchUser) {
+        bind() 
+        viewModel.setUser(user)
+        nameLabel.text = user.nick
+        setFollowingStatus()
+        
+        if let birthDay = user.birthDay {
+            birthLabel.text = birthDay
+        }
+        if let profileImage = user.profileImage {
+            NetworkManager.shared.readImage(profileImage)
+                .compactMap { response -> UIImage? in
+                    switch response {
+                    case .success(let data):
+                        return UIImage(data: data)
+                    case .failure(_):
+                        return nil
+                    }
+                }
+                .asDriver(onErrorJustReturn: UIImage(systemName: "person.fill")!.withTintColor(.red))
+                .drive(with: self) { owner, image in
+                    owner.profileView.setImage(image)
+                }
+                .disposed(by: disposeBag)
+        } else {
+            let image = UIImage(systemName: "person.fill")!.withTintColor(.red)
+            profileView.setImage(image)
+        }
+    }
+    
+    private func setFollowingStatus() {
+        guard let isFollowing = viewModel.isFollowing else { return }
+        if isFollowing {
+            followButton.setTitle("언팔로우", for: .normal)
+            followButton.backgroundColor = .hbdGreen
+            followButton.setTitleColor(.white, for: .normal)
+        } else {
+            followButton.setTitle("팔로우", for: .normal)
+            followButton.backgroundColor = .hbdMain
+            followButton.setTitleColor(.white, for: .normal)
+        }
     }
     
     
@@ -61,7 +150,6 @@ final class FollowCollectionViewCell: UICollectionViewCell {
         [profileView, nameLabel, birthLabel, followButton].forEach {
             backgroundFollowView.addSubview($0)
         }
-        
     }
     
     private func configureLayout() {
@@ -82,7 +170,6 @@ final class FollowCollectionViewCell: UICollectionViewCell {
             make.leading.equalTo(profileView.snp.trailing).offset(20)
             make.top.equalTo(backgroundFollowView.snp.centerY).offset(4)
         }
-        
         followButton.snp.makeConstraints { make in
             make.centerY.equalTo(backgroundFollowView.snp.centerY)
             make.trailing.equalTo(backgroundFollowView.snp.trailing).offset(-12)
@@ -93,32 +180,7 @@ final class FollowCollectionViewCell: UICollectionViewCell {
         
     }
 
-    func setContents(_ follow: Follow) {
-        nameLabel.text = follow.nick
-        followButton.setTitle("팔로우", for: .normal)
-        if let birthDay = follow.birthDay {
-            birthLabel.text = birthDay
-        }
-        if let profileImage = follow.profileImage {
-            NetworkManager.shared.readImage(profileImage)
-                .compactMap { response -> UIImage? in
-                    switch response {
-                    case .success(let data):
-                        return UIImage(data: data)
-                    case .failure(_):
-                        return nil
-                    }
-                }
-                .asDriver(onErrorJustReturn: UIImage(systemName: "person.fill")!.withTintColor(.red))
-                .drive(with: self) { owner, image in
-                    owner.profileView.setImage(image)
-                }
-                .disposed(by: disposeBag)
-        } else {
-            let image = UIImage(systemName: "person.fill")!.withTintColor(.red)
-            profileView.setImage(image)
-        }
-    }
+    
 }
 
 

@@ -15,29 +15,77 @@ final class FollowSearchViewModel {
     
     struct Input {
         let searchName: PublishRelay<String>
+        let emptyName: BehaviorSubject<String>
     }
     
     struct Output {
-        let searchNameResult: PublishSubject<[Follow]>
+        let searchNameResult: PublishSubject<[SearchUser]>
     }
     
     func transform(_ input: Input) -> Output {
-        let searchNameResult = PublishSubject<[Follow]>()
+        let followSearchList = PublishSubject<(String, [String])>()
+        let searchNameResult = PublishSubject<[SearchUser]>()
         
         input.searchName
-            .flatMap {
-                NetworkManager.shared.searchUser($0)
+            .flatMap { searchName in
+                return NetworkManager.shared.getMyProfile()
+                    .map { response in
+                        switch response {
+                        case .success(let myProfile):
+                            let followingUserID = myProfile.following.map { $0.userID }
+                            return (searchName, followingUserID)
+                        case .failure(_):
+                            return (searchName, [])
+                        }
+                    }
             }
-            .subscribe(with: self) { _, response in
-                switch response {
-                case .success(let searchResult):
-                    searchNameResult.onNext(searchResult)
-                case .failure(let error):
-                    print(error)
-                }
+            .subscribe(onNext: { result in
+                followSearchList.onNext(result)
+            })
+            .disposed(by: disposeBag)
+        
+        input.emptyName
+            .flatMap { _ in
+                NetworkManager.shared.getMyProfile()
+                    .map { response in
+                        switch response {
+                        case .success(let myProfile):
+                            let following = myProfile.following.map { $0.convertToSearchUser() }
+                            return following
+                        case .failure(_):
+                            return []
+                        }
+                    }
+            }
+            .subscribe { follow in
+                searchNameResult.onNext(follow)
             }
             .disposed(by: disposeBag)
         
+            
+        followSearchList
+            .flatMap { (searchName, followingList) in
+                NetworkManager.shared.searchUser(searchName)
+                    .map { response in
+                        switch response {
+                        case .success(let users):
+                            var searchUser = users
+                            for user in users.indices {
+                                if followingList.contains(users[user].userID) {
+                                    searchUser[user].isFollowing = true
+                                }
+                            }
+                            return searchUser
+                        case .failure(_):
+                            return []
+                        }
+                    }
+            }
+            .subscribe { searchResult in
+                searchNameResult.onNext(searchResult)
+            }
+            .disposed(by: disposeBag)
+            
         return Output(searchNameResult: searchNameResult)
     }
     

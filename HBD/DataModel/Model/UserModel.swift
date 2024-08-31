@@ -54,4 +54,12 @@ struct Follow: Decodable {
         case userID = "user_id"
         case nick, profileImage, birthDay
     }
+    
+    func convertToSearchUser() -> SearchUser {
+        return SearchUser(userID: self.userID,
+                          nick: self.nick,
+                          profileImage: self.profileImage,
+                          birthDay: self.birthDay, 
+                          isFollowing: true)
+    }
 }
