@@ -35,20 +35,28 @@ final class FollowSearchViewController: UIViewController {
     
     private func bind() {
         let searchName = PublishRelay<String>()
+        let emptyName = BehaviorSubject<String>(value: "")
         
-        let input = FollowSearchViewModel.Input(searchName: searchName)
+        let input = FollowSearchViewModel.Input(searchName: searchName, emptyName: emptyName)
         let output = viewModel.transform(input)
-        
-        searchController.searchBar.rx.text.orEmpty
+
+        searchController.searchBar.rx.text
+            .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
             .distinctUntilChanged()
             .subscribe(with: self) { owner, value in
-                searchName.accept(value)
+                guard let value else { return }
+                if value == "" {
+                    emptyName.onNext("")
+                } else {
+                    searchName.accept(value)
+                }
             }
             .disposed(by: disposeBag)
         
         output.searchNameResult
             .asDriver(onErrorJustReturn: [])
             .drive(searchFollowCollectionView.rx.items(cellIdentifier: FollowCollectionViewCell.reuseIdentifier, cellType: FollowCollectionViewCell.self)) { row, element, cell in
+                
                 cell.setContents(element)
             }
             .disposed(by: disposeBag)

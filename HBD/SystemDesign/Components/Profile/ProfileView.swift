@@ -38,7 +38,7 @@ final class ProfileView: UIView {
         imageView.layer.borderWidth = selected ? 4 : 0 
     }
     
-    func setImage(_ image: UIImage) {
+    func setImage(_ image: UIImage?) {
         imageView.image = image
     }
     
