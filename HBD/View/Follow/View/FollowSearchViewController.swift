@@ -16,7 +16,7 @@ final class FollowSearchViewController: UIViewController {
     private let viewModel = FollowSearchViewModel()
     
     private let searchController = UISearchController(searchResultsController: nil)
-    let searchFollowCollectionView = UICollectionView(frame: .zero, collectionViewLayout: FollowSearchViewController.createSearchLayout())
+    private let searchFollowCollectionView = UICollectionView(frame: .zero, collectionViewLayout: .followLayout())
         .then {
         $0.register(FollowCollectionViewCell.self, forCellWithReuseIdentifier: FollowCollectionViewCell.reuseIdentifier)
     }
@@ -78,7 +78,7 @@ final class FollowSearchViewController: UIViewController {
     
     private func configureUI() {
         view.backgroundColor = .white
-        
+        setNavigation()
         configureSearchController()
     }
     
@@ -88,18 +88,12 @@ final class FollowSearchViewController: UIViewController {
         searchController.searchBar.placeholder = "팔로우할 친구를 검색해보세요"
     }
     
-    static func createSearchLayout() -> UICollectionViewLayout {
-        let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
-        let item = NSCollectionLayoutItem(layoutSize: size)
-        
-        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(ContentSize.screenWidth), heightDimension: .absolute(ContentSize.profileImageCell.size.height))
-        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-        
-        let section = NSCollectionLayoutSection(group: group)
-        let layout = UICollectionViewCompositionalLayout(section: section)
-        
-        return layout
+    private func setNavigation() {
+        let calendarImage = UIImage(systemName: "calendar")!.withTintColor(.hbdMain, renderingMode: .alwaysOriginal)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: calendarImage, style: .plain, target: self, action: #selector(calendarButtonTapped))
     }
-    
-}
 
+    @objc private func calendarButtonTapped() {
+        self.navigationController?.pushViewController(CalendarViewController(), animated: false)
+    }
+}
