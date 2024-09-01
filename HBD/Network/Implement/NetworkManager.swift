@@ -362,42 +362,45 @@ final class NetworkManager {
         }
     }
     
-    func getaPost(_ postID: String) {
-        do {
-            let request = try HBDRequest.readPost(postID: postID).asURLRequest()
-            
-            AF.request(request)
-                .responseDecodable(of: PostResponse.self) { response in
-                    switch response.result {
-                    case .success(let data):
-                        switch response.response?.statusCode {
-                        case 200:
-                            print(data)
-                        default:
-                            break
-                        }
-                    case .failure(let error):
-                        switch  response.response?.statusCode {
-                        case 401, 403:
-                            print(error)
-                        case 419:
-                            self.refreshToken()
-                                .subscribe(with: self) { owner, response in
-                                    switch response {
-                                    case .success(_):
-                                        owner.getaPost(postID)
-                                    case .failure(let error):
-                                        print(error)
+    func getaPost(_ postID: String) -> Single<Result<PostModel, Error>> {
+        return Single.create { single -> Disposable in
+            do {
+                let request = try HBDRequest.readPost(postID: postID).asURLRequest()
+                
+                AF.request(request)
+                    .responseDecodable(of: PostResponse.self) { response in
+                        switch response.result {
+                        case .success(let post):
+                            switch response.response?.statusCode {
+                            case 200:
+                                single(.success(.success(post.convertToPostModel())))
+                            default:
+                                break
+                            }
+                        case .failure(let error):
+                            switch  response.response?.statusCode {
+                            case 401, 403:
+                                single(.success(.failure(NetworkError.emptyDataError)))
+                            case 419:
+                                self.refreshToken()
+                                    .subscribe(with: self) { owner, response in
+                                        switch response {
+                                        case .success(_):
+                                            owner.getaPost(postID)
+                                        case .failure(let error):
+                                            print(error)
+                                        }
                                     }
-                                }
-                                .disposed(by: self.disposeBag)
-                        default:
-                            break
+                                    .disposed(by: self.disposeBag)
+                            default:
+                                break
+                            }
                         }
                     }
-                }
-        } catch {
-            print(error)
+            } catch {
+                print(error)
+            }
+            return Disposables.create()
         }
     }
     
@@ -720,6 +723,49 @@ final class NetworkManager {
                                         switch response {
                                         case .success(_):
                                             owner.paymentValidation(payment)
+                                        case .failure(let error):
+                                            print(error)
+                                        }
+                                    }
+                                    .disposed(by: self.disposeBag)
+                            default:
+                                break
+                            }
+                        }
+                    }
+            } catch {
+                print(error)
+            }
+            return Disposables.create()
+        }
+    }
+    
+    func getPaymentsList() -> Single<Result<[PaymentResponse], Error>> {
+        return Single.create { single -> Disposable in
+            do {
+                
+                let request = try HBDRequest.paymentsList.asURLRequest()
+                
+                AF.request(request)
+                    .responseDecodable(of: PaymentsListResponse.self) { response in
+                        switch response.result {
+                        case .success(let data):
+                            switch response.response?.statusCode {
+                            case 200:
+                                single(.success(.success(data.data)))
+                            default:
+                                break
+                            }
+                        case .failure(_):
+                            switch  response.response?.statusCode {
+                            case 401, 403:
+                                single(.success(.failure(NetworkError.emptyDataError)))
+                            case 419:
+                                self.refreshToken()
+                                    .subscribe(with: self) { owner, response in
+                                        switch response {
+                                        case .success(_):
+                                            owner.getPaymentsList()
                                         case .failure(let error):
                                             print(error)
                                         }

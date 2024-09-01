@@ -35,6 +35,7 @@ enum HBDRequest {
     case followCancel(userID: String)
     
     case paymentValidation(payment: PaymentQuery)
+    case paymentsList
 }
 
 extension HBDRequest: HTTPRequestable {
@@ -79,7 +80,7 @@ extension HBDRequest: HTTPRequestable {
         switch self {
         case .duplicateEmailCheck, .signin, .login, .createImage, .createPost, .joinPost, .followUser, .paymentValidation:
                 .post
-        case .refreshToken, .readMyProfile, .readOtherProfile, .readPost, .readPosts, .searchUser, .readImage:
+        case .refreshToken, .readMyProfile, .readOtherProfile, .readPost, .readPosts, .searchUser, .readImage, .paymentsList:
                 .get
         case .updateProfile, .updatePost:
                 .put
@@ -122,6 +123,8 @@ extension HBDRequest: HTTPRequestable {
             [link]
         case .paymentValidation:
             ["payments", "validation"]
+        case .paymentsList:
+            ["payments", "me"]
         }
     }
     
@@ -155,7 +158,7 @@ extension HBDRequest: HTTPRequestable {
                     HeaderContents.sesacKey.rawValue : try apiKey,
                     HeaderContents.refresh.rawValue : UserDefaultsManager.shared.refreshToken
                 ]
-            case .readMyProfile, .readOtherProfile, .readPost, .readPosts, .deletePost, .searchUser, .followUser, .followCancel, .readImage:
+            case .readMyProfile, .readOtherProfile, .readPost, .readPosts, .deletePost, .searchUser, .followUser, .followCancel, .readImage, .paymentsList:
                 return [
                     HeaderContents.sesacKey.rawValue : try apiKey,
                     HeaderContents.authorization.rawValue : UserDefaultsManager.shared.accessToken

@@ -17,6 +17,7 @@ final class MainTabBarController: UITabBarController {
         
         let nav1VC = FollowSearchViewController()
         let nav2VC = MainGiftViewController()
+        let nav3VC = MyInformationViewController()
         
         
         let nav1 = UINavigationController(rootViewController: nav1VC)
@@ -25,9 +26,12 @@ final class MainTabBarController: UITabBarController {
         let nav2 = UINavigationController(rootViewController: nav2VC)
         nav2.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "gift"), tag: 1)
         
-        setViewControllers([nav1, nav2], animated: false)
+        let nav3 = UINavigationController(rootViewController: nav3VC)
+        nav3.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "person"), tag: 1)
         
-        selectedIndex = 1
+        setViewControllers([nav1, nav2, nav3], animated: false)
+        
+        selectedIndex = 2
     }
     
 }
