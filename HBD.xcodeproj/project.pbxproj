@@ -23,6 +23,7 @@
 		533A54CD2C8381BC002D97B6 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533A54CC2C8381BC002D97B6 /* CalendarViewModel.swift */; };
 		533A54CF2C838B67002D97B6 /* CalendarBirthDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533A54CE2C838B67002D97B6 /* CalendarBirthDay.swift */; };
 		533A54D32C83AAB4002D97B6 /* UICollectionViewLayout+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533A54D22C83AAB4002D97B6 /* UICollectionViewLayout+Extension.swift */; };
+		533A54DA2C83AFCF002D97B6 /* MyInformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533A54D92C83AFCF002D97B6 /* MyInformationViewController.swift */; };
 		534249A72C7C95B4005E0206 /* NaivagionBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534249A62C7C95B4005E0206 /* NaivagionBaseViewController.swift */; };
 		534249A92C7C95EB005E0206 /* BlackLeftBarButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534249A82C7C95EB005E0206 /* BlackLeftBarButtonItem.swift */; };
 		534249AF2C7CE14A005E0206 /* GiftInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534249AE2C7CE14A005E0206 /* GiftInformationView.swift */; };
@@ -32,6 +33,11 @@
 		53456A6D2C72DF5F00FB2B48 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 53456A6C2C72DF5F00FB2B48 /* Base */; };
 		53456A752C72E01200FB2B48 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 53456A742C72E01200FB2B48 /* .gitignore */; };
 		53465A192C81B4D40077D805 /* FollowCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53465A182C81B4D40077D805 /* FollowCollectionViewModel.swift */; };
+		535174EA2C84B54D007A6D7B /* MyPaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535174E92C84B54D007A6D7B /* MyPaymentView.swift */; };
+		535174EC2C84B55F007A6D7B /* MyGiftView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535174EB2C84B55F007A6D7B /* MyGiftView.swift */; };
+		535174EE2C84B7D8007A6D7B /* MyPaymentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535174ED2C84B7D8007A6D7B /* MyPaymentViewModel.swift */; };
+		535174F02C84B7E6007A6D7B /* MyGiftViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535174EF2C84B7E6007A6D7B /* MyGiftViewModel.swift */; };
+		535174F22C84B8BC007A6D7B /* PaymentsListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535174F12C84B8BC007A6D7B /* PaymentsListResponse.swift */; };
 		535C11E22C7F08FA0047377A /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = 535C11E12C7F08FA0047377A /* Toast */; };
 		535C11E72C7F964D0047377A /* FollowSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535C11E62C7F964D0047377A /* FollowSearchViewController.swift */; };
 		535C11E92C7F96580047377A /* FollowSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535C11E82C7F96570047377A /* FollowSearchViewModel.swift */; };
@@ -94,6 +100,7 @@
 		533A54CC2C8381BC002D97B6 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		533A54CE2C838B67002D97B6 /* CalendarBirthDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarBirthDay.swift; sourceTree = "<group>"; };
 		533A54D22C83AAB4002D97B6 /* UICollectionViewLayout+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionViewLayout+Extension.swift"; sourceTree = "<group>"; };
+		533A54D92C83AFCF002D97B6 /* MyInformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyInformationViewController.swift; sourceTree = "<group>"; };
 		534249A62C7C95B4005E0206 /* NaivagionBaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaivagionBaseViewController.swift; sourceTree = "<group>"; };
 		534249A82C7C95EB005E0206 /* BlackLeftBarButtonItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlackLeftBarButtonItem.swift; sourceTree = "<group>"; };
 		534249AE2C7CE14A005E0206 /* GiftInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftInformationView.swift; sourceTree = "<group>"; };
@@ -105,6 +112,11 @@
 		53456A6E2C72DF5F00FB2B48 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		53456A742C72E01200FB2B48 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		53465A182C81B4D40077D805 /* FollowCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowCollectionViewModel.swift; sourceTree = "<group>"; };
+		535174E92C84B54D007A6D7B /* MyPaymentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPaymentView.swift; sourceTree = "<group>"; };
+		535174EB2C84B55F007A6D7B /* MyGiftView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGiftView.swift; sourceTree = "<group>"; };
+		535174ED2C84B7D8007A6D7B /* MyPaymentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPaymentViewModel.swift; sourceTree = "<group>"; };
+		535174EF2C84B7E6007A6D7B /* MyGiftViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGiftViewModel.swift; sourceTree = "<group>"; };
+		535174F12C84B8BC007A6D7B /* PaymentsListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsListResponse.swift; sourceTree = "<group>"; };
 		535C11E62C7F964D0047377A /* FollowSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowSearchViewController.swift; sourceTree = "<group>"; };
 		535C11E82C7F96570047377A /* FollowSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowSearchViewModel.swift; sourceTree = "<group>"; };
 		536F5C662C80318E00E20706 /* FollowCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -180,6 +192,34 @@
 				533A54D22C83AAB4002D97B6 /* UICollectionViewLayout+Extension.swift */,
 			);
 			path = Extension;
+			sourceTree = "<group>";
+		};
+		533A54D42C83AFAF002D97B6 /* MyGift */ = {
+			isa = PBXGroup;
+			children = (
+				533A54D82C83AFC6002D97B6 /* ViewModel */,
+				533A54D72C83AFC4002D97B6 /* View */,
+			);
+			path = MyGift;
+			sourceTree = "<group>";
+		};
+		533A54D72C83AFC4002D97B6 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				533A54D92C83AFCF002D97B6 /* MyInformationViewController.swift */,
+				535174E92C84B54D007A6D7B /* MyPaymentView.swift */,
+				535174EB2C84B55F007A6D7B /* MyGiftView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		533A54D82C83AFC6002D97B6 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				535174ED2C84B7D8007A6D7B /* MyPaymentViewModel.swift */,
+				535174EF2C84B7E6007A6D7B /* MyGiftViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		534249A52C7C95A5005E0206 /* Navigation */ = {
@@ -268,6 +308,7 @@
 		53A4293B2C760E6D0019FC95 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				533A54D42C83AFAF002D97B6 /* MyGift */,
 				535C11E32C7F96370047377A /* Follow */,
 				53A429422C7610270019FC95 /* Main */,
 				53A4293C2C760E7D0019FC95 /* TabBar */,
@@ -442,6 +483,7 @@
 				53A429372C7603C80019FC95 /* SearchUserReponse.swift */,
 				53A429392C7605C80019FC95 /* FollowResponse.swift */,
 				532B7A452C81744700F8F35B /* PaymentResponse.swift */,
+				535174F12C84B8BC007A6D7B /* PaymentsListResponse.swift */,
 			);
 			path = Decodable;
 			sourceTree = "<group>";
@@ -580,10 +622,13 @@
 				5320E8082C747B4000F01CC1 /* ImageResponse.swift in Sources */,
 				53A429382C7603C80019FC95 /* SearchUserReponse.swift in Sources */,
 				53E1F2CC2C736E29005A6297 /* NetworkError.swift in Sources */,
+				535174EE2C84B7D8007A6D7B /* MyPaymentViewModel.swift in Sources */,
 				534249AF2C7CE14A005E0206 /* GiftInformationView.swift in Sources */,
 				53E1F2CE2C736E29005A6297 /* HTTPRequestable.swift in Sources */,
+				533A54DA2C83AFCF002D97B6 /* MyInformationViewController.swift in Sources */,
 				531271312C7E38B800F5AF25 /* PostGiftViewController.swift in Sources */,
 				532B7A442C81738E00F8F35B /* PaymentQuery.swift in Sources */,
+				535174F02C84B7E6007A6D7B /* MyGiftViewModel.swift in Sources */,
 				53BBBDD52C7B9E5D00ADA499 /* DetailGiftViewModel.swift in Sources */,
 				53A429832C772EB90019FC95 /* ContentSize.swift in Sources */,
 				53A429582C7637B10019FC95 /* MainGiftViewModel.swift in Sources */,
@@ -621,15 +666,18 @@
 				53A4293E2C760E8B0019FC95 /* MainTabBarController.swift in Sources */,
 				535C11E72C7F964D0047377A /* FollowSearchViewController.swift in Sources */,
 				53A429512C7610A10019FC95 /* ProfileCollectionViewCell.swift in Sources */,
+				535174F22C84B8BC007A6D7B /* PaymentsListResponse.swift in Sources */,
 				53E1F2CD2C736E29005A6297 /* RequestVersion.swift in Sources */,
 				53E1F2DA2C736E29005A6297 /* LoginResponse.swift in Sources */,
 				53465A192C81B4D40077D805 /* FollowCollectionViewModel.swift in Sources */,
+				535174EA2C84B54D007A6D7B /* MyPaymentView.swift in Sources */,
 				535C11E92C7F96580047377A /* FollowSearchViewModel.swift in Sources */,
 				53E1F2CA2C736E29005A6297 /* UserDefaultManager.swift in Sources */,
 				533A54D32C83AAB4002D97B6 /* UICollectionViewLayout+Extension.swift in Sources */,
 				533A54CD2C8381BC002D97B6 /* CalendarViewModel.swift in Sources */,
 				53A429442C76102D0019FC95 /* MainGiftViewController.swift in Sources */,
 				5320E80C2C747F4F00F01CC1 /* PostResponse.swift in Sources */,
+				535174EC2C84B55F007A6D7B /* MyGiftView.swift in Sources */,
 				532B7A462C81744700F8F35B /* PaymentResponse.swift in Sources */,
 				5320E8052C745EC600F01CC1 /* UserProfileResponse.swift in Sources */,
 				53D196A62C7CF73400301C32 /* GiftInformationViewModel.swift in Sources */,

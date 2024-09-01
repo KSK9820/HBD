@@ -29,7 +29,7 @@ final class MainGiftViewController: UIViewController {
         $0.tintColor = .white
         $0.layer.cornerRadius = ContentSize.floatingButton.radius
     }
-
+    
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -113,7 +113,7 @@ final class MainGiftViewController: UIViewController {
                 print("disposed")
             }
             .disposed(by: disposeBag)
-
+        
         output.floatingProfile
             .subscribe(with: self) { owner, value in
                 let vc = PostGiftViewController(id: value.userID)
@@ -135,7 +135,7 @@ final class MainGiftViewController: UIViewController {
             }
             .disposed(by: disposeBag)
     }
-
+    
     
     // MARK: - Configure UI
     
@@ -161,46 +161,17 @@ final class MainGiftViewController: UIViewController {
         
     }
     
-
+    
     func createLayout() -> UICollectionViewLayout {
         return UICollectionViewCompositionalLayout { [weak self] sectionIndex, environment in
             switch sectionIndex {
             case 0:
-                self?.createProfileSectionLayout()
+                UICollectionViewLayout.createProfileSection()
             case 1:
-                self?.createGiftSectionLayout()
+                UICollectionViewLayout.createGiftSection()
             default:
-                self?.createGiftSectionLayout()
+                UICollectionViewLayout.createGiftSection()
             }
         }
     }
-    
-    private func createProfileSectionLayout() -> NSCollectionLayoutSection {
-        let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
-        let item = NSCollectionLayoutItem(layoutSize: size)
-        
-        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(ContentSize.profileImageCell.size.width + 8), heightDimension: .absolute(ContentSize.profileImageCell.size.height + 8))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-        group.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4)
-        
-        let section = NSCollectionLayoutSection(group: group)
-        section.orthogonalScrollingBehavior = .continuous
-        
-        return section
-    }
-    
-    private func createGiftSectionLayout() -> NSCollectionLayoutSection {
-        let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
-        let item = NSCollectionLayoutItem(layoutSize: size)
-        
-        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(ContentSize.screenWidth - 10), heightDimension: .absolute(ContentSize.screenWidth))
-        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-        
-        let section = NSCollectionLayoutSection(group: group)
-        
-        return section
-    }
-    
 }
-
-
