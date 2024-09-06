@@ -32,7 +32,7 @@ final class MyGiftViewModel {
                     .map { response in
                         switch response {
                         case .success(let data):
-                            return data
+                            return data.data.map { $0.convertToPostModel() }
                         case .failure(_):
                             return []
                         }

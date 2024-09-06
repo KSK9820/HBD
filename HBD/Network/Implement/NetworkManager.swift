@@ -110,7 +110,7 @@ final class NetworkManager {
                         case .success(let data):
                             switch response.response?.statusCode {
                             case 200:
-                                print(data)
+//                                print(data)
                                 single(.success(.success(data)))
                             default:
                                 break
@@ -316,7 +316,7 @@ final class NetworkManager {
         }
     }
     
-    func getPosts(_ productID: String, page: String) -> Single<Result<[PostModel], Error>> {
+    func getPosts(_ productID: String, page: String) -> Single<Result<PostsResponse, Error>> {
         return Single.create { single -> Disposable in
             do {
                 let request = try HBDRequest.readPosts(productID: productID, page: page).asURLRequest()
@@ -327,11 +327,7 @@ final class NetworkManager {
                         case .success(let posts):
                             switch response.response?.statusCode {
                             case 200:
-                                var postModel = [PostModel]()
-                                for post in posts.data {
-                                    postModel.append(post.convertToPostModel())
-                                }
-                                single(.success(.success(postModel)))
+                                single(.success(.success(posts)))
                             default:
                                 break
                             }
@@ -805,8 +801,8 @@ final class NetworkManager {
                         case .failure(let error):
                             switch response.response?.statusCode {
                             case 401, 403, 418:
-                                self.login(LoginQuery(email: "hbd0@com", password: "1"))
-                                //single(.success(.failure(NetworkError.emptyDataError)))
+//                                self.login(LoginQuery(email: "hbd0@com", password: "1"))
+                                single(.success(.failure(NetworkError.emptyDataError)))
                             default:
                                 break
                             }

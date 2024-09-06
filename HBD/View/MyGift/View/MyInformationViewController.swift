@@ -18,12 +18,8 @@ final class MyInformationViewController: UIViewController {
         $0.backgroundColor = .hbdPink
         $0.addTarget(self, action: #selector(segmentedControlTapped(sender:)), for: .valueChanged)
     }
-    private let myGiftView = MyGiftView().then {
-        $0.backgroundColor = .green
-    }
-    private let myPaymentView = MyPaymentView().then {
-        $0.backgroundColor = .blue
-    }
+    private let myGiftView = MyGiftView()
+    private let myPaymentView = MyPaymentView()
     
     private var shouldHideFirstView: Bool? {
         didSet {
@@ -73,7 +69,7 @@ final class MyInformationViewController: UIViewController {
     }
     
     private func configureSegmentedControl() {
-        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.selectedSegmentIndex = 1
         segmentedControlTapped(sender: segmentedControl)
     }
     
