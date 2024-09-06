@@ -78,14 +78,12 @@ final class MainGiftViewModel {
                                 var currentSections = self.collectionViewData.value
                                 let newSection = MainSection(header: "section2", items: postModel.map { MainsectionItem.otherPostCell($0) })
                                 
-                                
-                                itemsRelay.accept(itemsRelay.value + postModel)
-                                //                                if let sectionIndex = currentSections.firstIndex(where: { $0.header == "section2" }) {
-                                //                                    currentSections[sectionIndex] = newSection
-                                //                                }
-                                //                                else {
-                                currentSections.append(newSection)
-                                //                                }
+                                itemsRelay.accept(postModel)
+                                if let sectionIndex = currentSections.firstIndex(where: { $0.header == "section2" }) {
+                                    currentSections[sectionIndex] = newSection
+                                } else {
+                                    currentSections.append(newSection)
+                                }
                                 
                                 self.collectionViewData.accept(currentSections)
                                 
@@ -120,7 +118,7 @@ final class MainGiftViewModel {
                 guard let maxIndex = indexPaths.map({ $0.row }).max(),
                       maxIndex >= itemsRelay.value.count - 2 else { return .empty() }
                 
-                return self.fetchPostItems(userID: userID, cursorPage: self.cursor)
+                return self.fetchPostItems(userID: userID)
             }.subscribe(with: self) { owner, value in
                 itemsRelay.accept(itemsRelay.value + value)
             }
@@ -133,10 +131,9 @@ final class MainGiftViewModel {
                 if let sectionIndex = currentSections.firstIndex(where: { $0.header == "section2" }) {
                     currentSections[sectionIndex].items.append(contentsOf: items.map { MainsectionItem.otherPostCell($0) })
                 }
-                print("🥳🥳", currentSections)
+
                 return currentSections
             }
-            .debug("🥳🥳")
             .asDriver(onErrorJustReturn: [])
             .drive(with: self) { owner, value in
                 owner.collectionViewData.accept(value)
@@ -147,7 +144,7 @@ final class MainGiftViewModel {
         return Output(beforeProfileSelect: selectedProfileIndexPath, collectionViewData: collectionViewData.asDriver(), selectedPostData: selectedPostData, floatingProfile: floatingProfile)
     }
     
-    private func fetchPostItems(userID: String, cursorPage: String) -> Observable<[PostModel]> {
+    private func fetchPostItems(userID: String) -> Observable<[PostModel]> {
         guard !isLoadingPage else { return .empty() }
         guard cursor != "0" else { return .empty() }
         isLoadingPage = true

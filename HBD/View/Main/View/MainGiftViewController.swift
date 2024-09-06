@@ -34,7 +34,7 @@ final class MainGiftViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         configureHierarchy()
         configureLayout()
         configureUI()
