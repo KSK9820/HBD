@@ -38,7 +38,7 @@ final class MyGiftView: UIView {
     private func bind() {
         let load = BehaviorRelay<Void>(value: ())
         
-        let input = MyGiftViewModel.Input(load: load)
+        let input = MyGiftViewModel.Input(load: load, postPrefetchItemsTrigger: collectionView.rx.prefetchItems)
         let output = viewModel.transform(input)
         
         output.myGiftPost
@@ -47,6 +47,8 @@ final class MyGiftView: UIView {
                 cell.setContent(element)
             }
             .disposed(by: disposeBag)
+        
+        
     }
     
     

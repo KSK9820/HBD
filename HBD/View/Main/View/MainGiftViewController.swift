@@ -34,7 +34,7 @@ final class MainGiftViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         configureHierarchy()
         configureLayout()
         configureUI()
@@ -56,7 +56,10 @@ final class MainGiftViewController: UIViewController {
         let nowSelectProfile = BehaviorRelay(value: IndexPath(item: 0, section: 0))
         let selectPost = PublishRelay<IndexPath>()
         
-        let input = MainGiftViewModel.Input(profileSelect: nowSelectProfile, userID: PublishSubject(), postSelect: selectPost, floatingButtonTap: floatingButton.rx.tap)
+        let input = MainGiftViewModel.Input(profileSelect: nowSelectProfile,
+                                            postSelect: selectPost,
+                                            floatingButtonTap: floatingButton.rx.tap,
+                                            postPrefetchItemsTrigger: collectionView.rx.prefetchItems)
         let output = viewModel.transform(input: input)
         
         // collectionView
@@ -92,6 +95,7 @@ final class MainGiftViewController: UIViewController {
         output.collectionViewData
             .drive(collectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
+    
         
         output.selectedPostData
             .compactMap { sectionItem -> PostModel? in
@@ -134,6 +138,8 @@ final class MainGiftViewController: UIViewController {
                 }
             }
             .disposed(by: disposeBag)
+        
+       
     }
     
     

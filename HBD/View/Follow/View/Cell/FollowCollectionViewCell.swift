@@ -53,10 +53,6 @@ final class FollowCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
         
         disposeBag = DisposeBag()
-        nameLabel.text = nil
-        birthLabel.text = nil
-        profileView.setImage(nil)
-        viewModel.initUser()
     }
     
     func bind() {

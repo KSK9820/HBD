@@ -43,20 +43,19 @@ final class MyPaymentViewModel {
             .disposed(by: disposeBag)
         
         paymentList
-            .flatMap { items in
-                // 모든 항목을 Observable로 변환
-                Observable.from(items)
-                    .concatMap { value in
-                        NetworkManager.shared.getaPost(value.postID)
-                            .asObservable()
-                            .compactMap { result in
-                                switch result {
-                                case .success(let data):
-                                    return data
-                                case .failure(_):
-                                    return nil
-                                }
-                            }
+            .concatMap { items in
+                    Observable.from(items)
+                }
+            .concatMap { value in
+                NetworkManager.shared.getaPost(value.postID)
+                    .asObservable()
+                    .compactMap { result in
+                        switch result {
+                        case .success(let data):
+                            return data
+                        case .failure(_):
+                            return nil
+                        }
                     }
                     .toArray()
             }
