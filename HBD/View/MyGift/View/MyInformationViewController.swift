@@ -66,6 +66,7 @@ final class MyInformationViewController: UIViewController {
         view.backgroundColor = .white
         
         configureSegmentedControl()
+        configureNavigation()
     }
     
     private func configureSegmentedControl() {
@@ -73,6 +74,9 @@ final class MyInformationViewController: UIViewController {
         segmentedControlTapped(sender: segmentedControl)
     }
     
+    private func configureNavigation() {
+        navigationItem.title = "마이 페이지"
+    }
     
     @objc private func segmentedControlTapped(sender: UISegmentedControl) {
         self.shouldHideFirstView = sender.selectedSegmentIndex != 0

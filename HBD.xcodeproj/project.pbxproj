@@ -42,6 +42,8 @@
 		535C11E72C7F964D0047377A /* FollowSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535C11E62C7F964D0047377A /* FollowSearchViewController.swift */; };
 		535C11E92C7F96580047377A /* FollowSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535C11E82C7F96570047377A /* FollowSearchViewModel.swift */; };
 		536F5C672C80318E00E20706 /* FollowCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536F5C662C80318E00E20706 /* FollowCollectionViewCell.swift */; };
+		53766CE02C8B0E11005BBCF3 /* MainNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53766CDF2C8B0E11005BBCF3 /* MainNavigationView.swift */; };
+		53766CE22C8C3FBE005BBCF3 /* ParticipatedProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53766CE12C8C3FBE005BBCF3 /* ParticipatedProfileView.swift */; };
 		53947B242C80955D006FFBC4 /* iamport-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 53947B232C80955D006FFBC4 /* iamport-ios */; };
 		53947B272C8095D3006FFBC4 /* PaymentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53947B262C8095D3006FFBC4 /* PaymentManager.swift */; };
 		53A4291A2C74AC560019FC95 /* PostsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53A429192C74AC560019FC95 /* PostsResponse.swift */; };
@@ -120,6 +122,8 @@
 		535C11E62C7F964D0047377A /* FollowSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowSearchViewController.swift; sourceTree = "<group>"; };
 		535C11E82C7F96570047377A /* FollowSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowSearchViewModel.swift; sourceTree = "<group>"; };
 		536F5C662C80318E00E20706 /* FollowCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowCollectionViewCell.swift; sourceTree = "<group>"; };
+		53766CDF2C8B0E11005BBCF3 /* MainNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainNavigationView.swift; sourceTree = "<group>"; };
+		53766CE12C8C3FBE005BBCF3 /* ParticipatedProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipatedProfileView.swift; sourceTree = "<group>"; };
 		53947B262C8095D3006FFBC4 /* PaymentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentManager.swift; sourceTree = "<group>"; };
 		53A429192C74AC560019FC95 /* PostsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsResponse.swift; sourceTree = "<group>"; };
 		53A4291B2C74AF9C0019FC95 /* LikeDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikeDTO.swift; sourceTree = "<group>"; };
@@ -290,9 +294,9 @@
 		535C11E52C7F96400047377A /* View */ = {
 			isa = PBXGroup;
 			children = (
+				535C11E62C7F964D0047377A /* FollowSearchViewController.swift */,
 				53BE71EC2C837794003DE9C9 /* CalendarViewController.swift */,
 				53AC9D512C80313800838307 /* Cell */,
-				535C11E62C7F964D0047377A /* FollowSearchViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -350,6 +354,7 @@
 				53BBBDD22C7B9D7F00ADA499 /* DetailGiftViewController.swift */,
 				534249AE2C7CE14A005E0206 /* GiftInformationView.swift */,
 				531271302C7E38B800F5AF25 /* PostGiftViewController.swift */,
+				53766CDF2C8B0E11005BBCF3 /* MainNavigationView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -360,6 +365,7 @@
 				53A429502C7610A10019FC95 /* ProfileCollectionViewCell.swift */,
 				53BBBDC72C79BC1E00ADA499 /* GiftCollectionViewCell.swift */,
 				53BBBDCF2C7B9CEA00ADA499 /* GiftCollectionViewCellViewModel.swift */,
+				53766CE12C8C3FBE005BBCF3 /* ParticipatedProfileView.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -622,6 +628,7 @@
 				5320E8082C747B4000F01CC1 /* ImageResponse.swift in Sources */,
 				53A429382C7603C80019FC95 /* SearchUserReponse.swift in Sources */,
 				53E1F2CC2C736E29005A6297 /* NetworkError.swift in Sources */,
+				53766CE22C8C3FBE005BBCF3 /* ParticipatedProfileView.swift in Sources */,
 				535174EE2C84B7D8007A6D7B /* MyPaymentViewModel.swift in Sources */,
 				534249AF2C7CE14A005E0206 /* GiftInformationView.swift in Sources */,
 				53E1F2CE2C736E29005A6297 /* HTTPRequestable.swift in Sources */,
@@ -653,6 +660,7 @@
 				531271332C7E486F00F5AF25 /* UITextView+Extension.swift in Sources */,
 				53BBBDCA2C79C7D900ADA499 /* ContentUserProfileView.swift in Sources */,
 				534249A72C7C95B4005E0206 /* NaivagionBaseViewController.swift in Sources */,
+				53766CE02C8B0E11005BBCF3 /* MainNavigationView.swift in Sources */,
 				534249A92C7C95EB005E0206 /* BlackLeftBarButtonItem.swift in Sources */,
 				53456A612C72DF5D00FB2B48 /* AppDelegate.swift in Sources */,
 				531271372C7E4F7000F5AF25 /* PostGiftViewModel.swift in Sources */,
