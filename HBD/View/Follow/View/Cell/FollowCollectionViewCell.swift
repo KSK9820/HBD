@@ -14,7 +14,6 @@ final class FollowCollectionViewCell: UICollectionViewCell {
     private let viewModel = FollowCollectionViewModel()
     
     private let backgroundFollowView = UIView().then {
-        $0.applyNeumorphismEffect()
         $0.layer.cornerRadius =  8
         $0.layer.borderColor = UIColor.hbdMain.cgColor
         $0.layer.borderWidth = 1
@@ -127,13 +126,15 @@ final class FollowCollectionViewCell: UICollectionViewCell {
     private func setFollowingStatus() {
         guard let isFollowing = viewModel.isFollowing else { return }
         if isFollowing {
-            followButton.setTitle("언팔로우", for: .normal)
-            followButton.backgroundColor = .hbdGreen
+            followButton.setTitle("unfollow", for: .normal)
+            followButton.backgroundColor = .hbdPink
             followButton.setTitleColor(.white, for: .normal)
+            followButton.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         } else {
-            followButton.setTitle("팔로우", for: .normal)
+            followButton.setTitle("follow", for: .normal)
             followButton.backgroundColor = .hbdMain
             followButton.setTitleColor(.white, for: .normal)
+            followButton.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         }
     }
     

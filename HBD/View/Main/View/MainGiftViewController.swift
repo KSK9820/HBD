@@ -19,6 +19,7 @@ final class MainGiftViewController: UIViewController {
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout()).then {
         $0.register(ProfileCollectionViewCell.self, forCellWithReuseIdentifier: ProfileCollectionViewCell.reuseIdentifier)
         $0.register(GiftCollectionViewCell.self, forCellWithReuseIdentifier: GiftCollectionViewCell.reuseIdentifier)
+        $0.backgroundColor = .hbdLightGray
     }
     private let floatingButton = UIButton().then {
         let imageConfig = UIImage.SymbolConfiguration(pointSize: ContentSize.floatingButton.size.width / 2, weight: .bold)
@@ -28,28 +29,20 @@ final class MainGiftViewController: UIViewController {
         $0.backgroundColor = UIColor.hbdMain
         $0.tintColor = .white
         $0.layer.cornerRadius = ContentSize.floatingButton.radius
+        $0.layer.borderWidth = 2
+        $0.layer.borderColor = UIColor.hbdPink.cgColor
     }
     
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         configureHierarchy()
         configureLayout()
         configureUI()
         bind()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.isNavigationBarHidden = true
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.navigationController?.isNavigationBarHidden = false
-    }
+
     
     private func bind() {
         
@@ -163,8 +156,12 @@ final class MainGiftViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .white
-        
+        view.backgroundColor = .hbdLightGray
+        configureNavigation()
+    }
+    
+    private func configureNavigation() {
+        navigationItem.titleView = MainNavigationView()
     }
     
     

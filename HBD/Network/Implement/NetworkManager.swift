@@ -110,8 +110,8 @@ final class NetworkManager {
                         case .success(let data):
                             switch response.response?.statusCode {
                             case 200:
-//                                print(data)
                                 single(.success(.success(data)))
+                                print(data)
                             default:
                                 break
                             }
@@ -187,42 +187,45 @@ final class NetworkManager {
         }
     }
     
-    func getOtherProfile(_ id: String) {
-        do {
-            let request = try HBDRequest.readOtherProfile(id: id).asURLRequest()
-            
-            AF.request(request)
-                .responseDecodable(of: UserProfileResponse.self) { response in
-                    switch response.result {
-                    case .success(let data):
-                        switch response.response?.statusCode {
-                        case 200:
-                            print(data)
-                        default:
-                            break
-                        }
-                    case .failure(let error):
-                        switch  response.response?.statusCode {
-                        case 401, 403:
-                            print(error)
-                        case 419:
-                            self.refreshToken()
-                                .subscribe(with: self) { owner, response in
-                                    switch response {
-                                    case .success(_):
-                                        owner.getOtherProfile(id)
-                                    case .failure(let error):
-                                        print(error)
+    func getOtherProfile(_ id: String) -> Single<Result<UserProfileResponse, Error>> {
+        return Single.create { single -> Disposable in
+            do {
+                let request = try HBDRequest.readOtherProfile(id: id).asURLRequest()
+                
+                AF.request(request)
+                    .responseDecodable(of: UserProfileResponse.self) { response in
+                        switch response.result {
+                        case .success(let data):
+                            switch response.response?.statusCode {
+                            case 200:
+                                single(.success(.success(data)))
+                            default:
+                                break
+                            }
+                        case .failure(let error):
+                            switch  response.response?.statusCode {
+                            case 401, 403:
+                                single(.success(.failure(NetworkError.emptyDataError)))
+                            case 419:
+                                self.refreshToken()
+                                    .subscribe(with: self) { owner, response in
+                                        switch response {
+                                        case .success(_):
+                                            owner.getOtherProfile(id)
+                                        case .failure(let error):
+                                            print(error)
+                                        }
                                     }
-                                }
-                                .disposed(by: self.disposeBag)
-                        default:
-                            break
+                                    .disposed(by: self.disposeBag)
+                            default:
+                                break
+                            }
                         }
                     }
-                }
-        } catch {
-            print(error)
+            } catch {
+                print(error)
+            }
+            return Disposables.create()
         }
     }
     

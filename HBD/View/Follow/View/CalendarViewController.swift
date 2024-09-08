@@ -18,8 +18,12 @@ final class CalendarViewController: NaivagionBaseViewController {
     
     private let viewModel = CalendarViewModel()
     
+    private let calendarView = UIView().then {
+        $0.applyNeumorphismEffect()
+    }
     private let calendar = UICalendarView().then {
         $0.isUserInteractionEnabled = true
+        $0.transform = CGAffineTransform(scaleX: 0.8, y: 0.7)
     }
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .followLayout()).then {
         $0.register(FollowCollectionViewCell.self, forCellWithReuseIdentifier: FollowCollectionViewCell.reuseIdentifier)
@@ -67,25 +71,29 @@ final class CalendarViewController: NaivagionBaseViewController {
             .disposed(by: disposeBag)
     }
     
-    private func setCalendar() {
-        calendar.delegate = self
-        calendar.selectionBehavior = UICalendarSelectionSingleDate(delegate: self)
-    }
+ 
     // MARK: - Configure UI
     
     private func configureHierarchy() {
-        view.addSubview(calendar)
+        view.addSubview(calendarView)
+        calendarView.addSubview(calendar)
         view.addSubview(collectionView)
     }
     
     private func configureLayout() {
         let safeArea = view.safeAreaLayoutGuide
         
+        calendarView.snp.makeConstraints { make in
+            make.top.equalTo(safeArea).offset(12)
+            make.centerX.equalToSuperview()
+            make.size.equalTo(ContentSize.screenWidth * 0.9)
+        }
         calendar.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalTo(safeArea)
+            make.horizontalEdges.equalToSuperview()
+            make.verticalEdges.equalToSuperview().inset(ContentSize.screenWidth * -0.15)
         }
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(calendar.snp.bottom).offset(10)
+            make.top.equalTo(calendar.snp.bottom)
             make.horizontalEdges.bottom.equalTo(safeArea)
         }
         
@@ -94,6 +102,16 @@ final class CalendarViewController: NaivagionBaseViewController {
     private func configureUI() {
         view.backgroundColor = .white
         setCalendar()
+        setNavigation()
+    }
+    
+    private func setCalendar() {
+        calendar.delegate = self
+        calendar.selectionBehavior = UICalendarSelectionSingleDate(delegate: self)
+    }
+    
+    private func setNavigation() {
+        navigationItem.title = "팔로우 생일 조회"
     }
     
 }

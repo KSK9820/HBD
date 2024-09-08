@@ -28,26 +28,28 @@ final class GiftCollectionViewCell: UICollectionViewCell {
         $0.contentMode = .scaleAspectFill
     }
     private let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 20, weight: .medium)
+        $0.font = .systemFont(ofSize: 20, weight: .semibold)
     }
-    private let priceLabel = UILabel()
-    private let dueDayLabel = UILabel()
+    private let participatedView = ParticipatedProfileView()
+    private let priceLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 18, weight: .medium)
+    }
+    private let dueDayLabel = UILabel().then {
+        $0.textColor = .darkGray
+        $0.font = .systemFont(ofSize: 12)
+    }
     private let joinButton = UIButton().then {
         $0.applyNeumorphismEffect(cornerRadius: 8, backgroundColor: .hbdMain)
         $0.setTitleColor(.white, for: .normal)
     }
     
-    lazy var wkWebView: WKWebView = {
-        var view = WKWebView()
-        view.backgroundColor = UIColor.clear
-        return view
-    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         configureHierarchy()
         configureLayout()
+        self.backgroundColor = .white
     }
     
     required init?(coder: NSCoder) {
@@ -94,9 +96,16 @@ final class GiftCollectionViewCell: UICollectionViewCell {
         output.joinResponse
             .subscribe(with: self) { owner, like in
                 if like {
-                    owner.setJoinDone()
+                    owner.setPaid()
                     owner.makeToast("결제 성공하였습니다!")
                 }
+            }
+            .disposed(by: disposeBag)
+        
+        output.participatedProfile
+            .subscribe(with: self) { owner, images in
+                owner.participatedView.setImages(images)
+                owner.participatedView.setLabel(total: content.recruitment, now: images.count)
             }
             .disposed(by: disposeBag)
         
@@ -104,12 +113,20 @@ final class GiftCollectionViewCell: UICollectionViewCell {
         priceLabel.text = viewModel.totalPrice
         dueDayLabel.text = viewModel.deadLine
         
-        if viewModel.participated {
-            setJoinDone()
+        if viewModel.recruitmentNumber == viewModel.particiapatedPerson.count {
+            setDone()
+        } else if viewModel.participated {
+            setPaid()
         } else {
             setNotJoin(viewModel.personalPrice)
         }
         
+    }
+    
+    private func setDone() {
+        joinButton.setTitle("참여 마감", for: .normal)
+        joinButton.setTitleColor(.white, for: .normal)
+        joinButton.backgroundColor = .hbdMain
     }
     
     private func setNotJoin(_ price: String) {
@@ -118,7 +135,7 @@ final class GiftCollectionViewCell: UICollectionViewCell {
         joinButton.backgroundColor = .hbdMain
     }
     
-    private func setJoinDone() {
+    private func setPaid() {
         joinButton.setTitle("결제 완료", for: .normal)
         joinButton.setTitleColor(.gray, for: .normal)
         joinButton.backgroundColor = .hbdPink
@@ -133,10 +150,9 @@ final class GiftCollectionViewCell: UICollectionViewCell {
         giftView.addSubview(imageBackgroundView)
         imageBackgroundView.addSubview(giftImageView)
         
-        [titleLabel, joinButton, priceLabel, dueDayLabel].forEach {
+        [titleLabel, joinButton, priceLabel, participatedView, dueDayLabel].forEach {
             giftView.addSubview($0)
         }
-        
     }
 
     private func configureLayout() {
@@ -155,6 +171,11 @@ final class GiftCollectionViewCell: UICollectionViewCell {
             make.edges.equalTo(imageBackgroundView)
         }
         
+        dueDayLabel.snp.makeConstraints { make in
+            make.top.equalTo(imageBackgroundView.snp.bottom).offset(12)
+            make.trailing.equalToSuperview().offset(-12)
+        }
+        
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(imageBackgroundView.snp.bottom).offset(12)
             make.leading.equalToSuperview().offset(12)
@@ -162,12 +183,12 @@ final class GiftCollectionViewCell: UICollectionViewCell {
         
         priceLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(10)
-            make.top.equalTo(joinButton.snp.top)
+            make.top.equalTo(titleLabel.snp.bottom).offset(8)
         }
         
-        dueDayLabel.snp.makeConstraints { make in
+        participatedView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(10)
-            make.bottom.equalTo(joinButton.snp.bottom)
+            make.top.equalTo(priceLabel.snp.bottom).offset(8)
         }
         
         joinButton.snp.makeConstraints { make in
@@ -175,6 +196,4 @@ final class GiftCollectionViewCell: UICollectionViewCell {
             make.size.equalTo(ContentSize.joinButton.size)
         }
     }
-    
-    
 }

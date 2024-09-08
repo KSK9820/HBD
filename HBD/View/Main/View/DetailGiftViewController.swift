@@ -44,14 +44,12 @@ final class DetailGiftViewController: NaivagionBaseViewController {
             self.navigationController?.popViewController(animated: false)
         }
     }
-    
 
     
     // MARK: - Configure UI
     
     private func configureHierarchy() {
         view.addSubview(profileView)
-        view.addSubview(informationView)
         view.addSubview(webView)
     }
     
@@ -59,21 +57,28 @@ final class DetailGiftViewController: NaivagionBaseViewController {
         let safeArea = view.safeAreaLayoutGuide
         
         profileView.snp.makeConstraints { make in
-            make.top.equalTo(safeArea).offset(12)
+            make.top.equalTo(safeArea).offset(30)
             make.horizontalEdges.equalToSuperview()
         }
-        informationView.snp.makeConstraints { make in
-            make.top.equalTo(profileView.snp.bottom).offset(30)
-            make.horizontalEdges.equalTo(safeArea).inset(12)
-        }
+
         webView.snp.makeConstraints { make in
-            make.top.equalTo(informationView.snp.bottom).offset(12)
+            make.top.equalTo(profileView.snp.bottom).offset(30)
             make.horizontalEdges.equalTo(safeArea)
         }
     }
     
     private func configureUI() {
         view.backgroundColor = .white
+        
+        setNavigation()
+        setWebView()
+    }
+    
+    private func setNavigation() {
+        self.navigationItem.title = "상세 화면"
+    }
+    
+    private func setWebView() {
         if let link = viewModel.link {
             DispatchQueue.main.async { [weak self] in
                 self?.webView.load(link)

@@ -37,7 +37,7 @@ extension ContentSize {
         case .contentUserProfileImage:
             return CGSize(width: ContentSize.screenWidth * 0.1, height: ContentSize.screenWidth * 0.1)
         case .joinButton:
-            return CGSize(width: ContentSize.screenWidth * 0.4, height: ContentSize.screenWidth * 0.12)
+            return CGSize(width: ContentSize.screenWidth * 0.3, height: ContentSize.screenWidth * 0.1)
         case .informationImage:
             return CGSize(width: ContentSize.screenWidth * 0.3, height: ContentSize.screenWidth * 0.3)
         case .floatingButton:

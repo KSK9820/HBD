@@ -53,7 +53,7 @@ final class ContentUserProfileView: UIView {
     private func configureUI() {
         profileView.setRadius(ContentSize.contentUserProfileImage.radius)
         profileView.setBorder(true)
-        nicknameLabel.text = creator.nick
+        nicknameLabel.text = creator.nick.split(separator: "_").map { String($0) }[0]
         
         if let profileImage = creator.profileImage {
             NetworkManager.shared.readImage(profileImage)

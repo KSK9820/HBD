@@ -23,7 +23,7 @@ final class GiftCollectionViewCellViewModel {
         return content.title
     }
     var totalPrice: String {
-        return "\(content.totalPrice) 원 / \(content.recruitment) 명"
+        return "\(content.totalPrice) 원"
     }
     var deadLine: String {
         guard let due = "\(content.recruitDeadline)".convertDate(.iso8601, to: .yymmdd_dash) else { return "" }
@@ -36,17 +36,27 @@ final class GiftCollectionViewCellViewModel {
         content.likes.contains(UserDefaultsManager.shared.userID) 
     }
     
+    var particiapatedPerson: [String] {
+        content.likes
+    }
+
+    var recruitmentNumber: Int {
+        content.recruitment
+    }
+    
     struct Input {
         let paymentResult: PublishSubject<Bool>
     }
     
     struct Output {
         let giftImageData: Observable<Data?>
+        let participatedProfile: BehaviorRelay<[Data]>
         let joinResponse: PublishSubject<Bool>
     }
     
     func transform(_ input: Input) -> Output {
         let joinResponse = PublishSubject<Bool>()
+        let participated = BehaviorRelay<[Data]>(value: [])
         
         let profileImage = content.files[0]
         let giftImage =  NetworkManager.shared.readImage(profileImage)
@@ -60,7 +70,34 @@ final class GiftCollectionViewCellViewModel {
                 }
             }
             .asObservable()
+
+        let profileIDRequest = particiapatedPerson.map { profile in
+            NetworkManager.shared.getOtherProfile(profile)
+                .flatMap { result -> Single<Data?> in
+                    switch result {
+                    case .success(let user):
+                        guard let profileImage = user.profileImage else { return .just(nil) }
+                        return NetworkManager.shared.readImage(profileImage)
+                            .map { newResult in
+                                switch newResult {
+                                case .success(let data):
+                                    return data
+                                case .failure(_):
+                                    return nil
+                                }
+                            }
+                    case .failure(_):
+                        return .just(nil)
+                    }
+                }
+                .asObservable()
+        }
         
+        Observable.zip(profileIDRequest)
+            .subscribe { profileImage in
+                participated.accept(profileImage.compactMap { $0 })
+            }
+            .disposed(by: disposeBag)
         
         input.paymentResult
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
@@ -83,7 +120,9 @@ final class GiftCollectionViewCellViewModel {
             }
             .disposed(by: disposeBag)
         
-        return Output(giftImageData: giftImage, joinResponse: joinResponse)
+        
+        
+        return Output(giftImageData: giftImage, participatedProfile: participated, joinResponse: joinResponse)
     }
   
 }

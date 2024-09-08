@@ -91,6 +91,7 @@ final class FollowSearchViewController: UIViewController {
     private func setNavigation() {
         let calendarImage = UIImage(systemName: "calendar")!.withTintColor(.hbdMain, renderingMode: .alwaysOriginal)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: calendarImage, style: .plain, target: self, action: #selector(calendarButtonTapped))
+        self.navigationItem.title = "팔로우 검색"
     }
 
     @objc private func calendarButtonTapped() {
