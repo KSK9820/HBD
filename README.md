@@ -59,11 +59,9 @@
 - 등록 화면 및 마이페이지
 
 
-|선물 등록|선물 결제|내가 결제한 목록|
+|선물 결제|내가 결제한 목록|내 선물 목록|
 |:--:|:--:|:--:|
-|![등록화면1](https://github.com/user-attachments/assets/d8eead1f-14f5-4f7c-a7be-071ce646f1c6)|![결제](https://github.com/user-attachments/assets/a5e009cd-88a2-41e0-8fad-ff50e9e2de00)|![내결제1](https://github.com/user-attachments/assets/995944ab-46d8-4934-8387-c84a92dd975f)|
-|내 선물 목록|||
-|![내선물1](https://github.com/user-attachments/assets/ddb5ebd7-2f55-4560-a655-8a47f8e35fa6)|||
+|![결제](https://github.com/user-attachments/assets/a5e009cd-88a2-41e0-8fad-ff50e9e2de00)|![내결제1](https://github.com/user-attachments/assets/995944ab-46d8-4934-8387-c84a92dd975f)|![내선물1](https://github.com/user-attachments/assets/ddb5ebd7-2f55-4560-a655-8a47f8e35fa6)|||
 
 - 기기 사이즈 대응
 
@@ -79,24 +77,22 @@
 
 - **Router Pattern과 Custom HTTPRequestable 프로토콜 활용**
     - 네트워크 설계시에 Router Pattern을 사용한 이유로는
-        - 네트워크 요청을 모듈화하여 코드 가독성과 유지보수성을 향상시켰습니다.
+        - 네트워크 요청을 추상화하여 코드 가독성과 유지보수성을 향상시켰습니다.
         - API 엔드포인트를 Router로 관리하여, 여러 개의 API 주소를 하나의 구조체에서 효율적으로 관리할 수 있었습니다.
-    - Alamofire 라이브러리와 Custom HTTPRequestable 프로토콜을 사용한 이유로는
-        - `동적인 경로`, `버전`, `쿼리 파라미터`, `포트 번호` ****등을 제어할 수 있어 복잡한 서버 환경에서도 유연하게 대응하기 위해서 Custom HTTPRequestable을 직접 구현하여서 사용하였습니다.
+    - Custom HTTPRequestable 프로토콜을 사용한 이유로는
+        - `동적인 경로`, `버전`, `쿼리 파라미터`, `포트 번호` 등을 제어할 수 있어 복잡한 서버 환경에서도 유연하게 대응하기 위해서 Custom HTTPRequestable을 직접 구현하여서 사용하였습니다.
 - **RxSwift + MVVM 아키텍처**
     - 반응형 프로그래밍인 RxSwift를 사용한 이유로는
-        - 데이터 흐름의 변화를 바로 파악할 수 있어 네트워크 결과와 같이 비동기적인 작업의 응답에 즉각적으로 UI 업데이트를 할 수 있습니다.
-        - RxCocoa를 통해 사용자 이벤트를 처리할 수 있어서 UI와 로직의 결합을 효율적으로 처리할 수 있기 때문에 RxSwift를 사용하였습니다.
+        - 이벤트 기반 흐름에서 데이터 변화를 즉각적으로 감지하고 UI를 업데이트할 수 있어, UI와 데이터간의 동기화에 용이합니다. 또한 RxCocoa를 통해 사용자 이벤트를 처리할 수 있어서 UI와 로직의 결합을 효율적으로 처리할 수 있기 때문에 RxSwift를 사용하였습니다.
         - 또한 하나의 CollectionView에서 여러 개의 Section과 각각 다른 Layout을 사용하기 위해 `RxDataSource`를 사용하였습니다.
     - MVVM을 사용한 이유로는
         - 비즈니스 로직과 UI 로직을 분리하여, 동일한 ViewModel을 여러 View에서 `재사용`하여 코드의 중복을 줄이고, 유지보수성을 향상시킬 수 있습니다.
+        - RxCocoa와 Input/Output 패턴을 사용하여 Input을 ViewModel에게 전달할 때 단방향으로 데이터의 흐름을 유지하기 때문에 코드 구조를 단순화할 수 있었습니다. 
         - **별도의 객체로 iamPort-iOS를 사용한 PG 결제 및 유효성 검증**
             - iamPort-iOS 문서에서 View 내에서 PG 결제를 처리하지 않고, `PaymentManger` 별도의 객체로 PG 결제 로직을 관리하면 결제와 관련된 로직을 중앙 집중화할 수 있어 유지보수가 쉬워집니다.
             - `PaymentManager` 내에서 결제 데이터 검증을 추가하여, 잘못된 데이터로 결제가 진행되지 않도록 방지할 수 있습니다.
 - **서버의 통신 모델(DTO)과 앱 내 데이터 모델(Model) 분리**
-    - 서버의 DTO와 앱 내에서 사용하는 Model을 분리함으로써, 서버의 데이터 구조가 변경되더라도 `앱 내 Model은 그대로 유지`할 수 있습니다.
-    - 각 객체에 명확한 책임을 부여하여 비즈니스 로직과 통신 로직을 분리할 수 있으며, 변환 로직을 통해 데이터 검증 및 일관성도 확보할 수 있습니다.
-    - 서버와 클라이언트 간의 의존성을 줄이고, 유지보수와 확장성을 극대화할 수 있습니다.
+    - 서버의 DTO와 앱 내에서 사용하는 Model을 분리함으로써, 서버의 데이터 구조가 변경되더라도 `앱 내 Model은 그대로 유지`할 수 있고, 앱 내부의 비즈니스 로직이나 UI 로직이 불필요하게 변경되는 것을 방지할 수 있습니다.
 - **Compositional Layout 및 기기 화면 사이즈의 비율에 맞춘 다양한 기기 화면에 대응하는 레이아웃 구현**
     - 기기의 가로, 세로 크기를 기반으로 각 컴포넌트의 CGSize를 비율로 계산해서 컴포넌트의 크기를 사용하기 때문에 다양한 기기에 맞는 화면을 구현할 수 있습니다.
 
